@@ -1,0 +1,44 @@
+.create-form {
+  background-color: #fff;
+  width: 100%;
+  margin: 0 auto;
+  text-align: start;
+  padding: 10px;
+  text-align: center;
+  padding: 10px 30px;
+  #post-btn {
+    font-size: 13px;
+    border: none;
+    background-color: #3b5998;
+    cursor: pointer;
+    border: none;
+    color: white;
+    border-radius: 10px;
+    text-transform: uppercase;
+    margin-left: 10px;
+    padding: 10px 30px;
+  }
+  textarea {
+    font-size: 14px;
+    height: 100px;
+    width: 100%;
+    border-top: 1px solid rgba(85, 85, 85, 0.4);
+    padding: 10px;
+    border-right: none;
+    border-left: none;
+  }
+  #error {
+    font-size: 14px;
+    width: 50%;
+    margin: auto;
+    margin-top: 30px;
+    color: red;
+  }
+  #error-input {
+    border: 1px solid rgba(117, 53, 53, 0.5);
+  }
+  #image-icon {
+    color: #555;
+    font-size: 24px;
+  }
+}

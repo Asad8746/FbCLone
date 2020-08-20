@@ -1,0 +1,4 @@
+{
+  "mongoUri": "mongodb://localhost/Fbclone",
+  "secretKey": "private-key"
+}

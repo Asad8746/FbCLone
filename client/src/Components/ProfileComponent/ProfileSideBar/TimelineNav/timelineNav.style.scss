@@ -1,0 +1,33 @@
+.follow-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    ul {
+        list-style: none;
+
+        li {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: rgb(93, 94, 172);
+            color:white;
+            cursor: pointer;
+            &:hover {
+                background-color: rgb(45, 46, 104);
+            }
+        }
+    }
+    .follow-btn {
+        border: none;
+        margin-top: 30px;
+        padding: 10px 30px;
+        transition: all .2s; 
+        background-color: rgb(219, 94, 94);
+        border-radius: 5px;
+        color:white;
+        cursor: pointer;
+        &:hover {
+            background-color: rgb(219, 94, 94) ;
+            border-radius: 50px;
+        }
+    }
+}

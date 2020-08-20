@@ -1,0 +1,19 @@
+.nf-container {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  .nf--heading {
+    text-transform: uppercase;
+    font-size: 60px;
+    color: tomato;
+    font-weight: 100;
+    letter-spacing: 10px;
+  }
+  #nf-btn {
+    background-color: tomato;
+    color: white;
+    font-size: 15px;
+  }
+}

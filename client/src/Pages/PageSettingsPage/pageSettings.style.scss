@@ -1,0 +1,47 @@
+.page-settings-actions-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  padding: 20px;
+  .pageBtn {
+    color: #3b5998;
+    background-color: #f7f7f7;
+    padding: 25px;
+    border: 1px solid #3b5998;
+    border-radius: 100px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    .btnIcon {
+      color: #3b5998;
+      font-size: 15px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #delete-icon,
+    #save-icon {
+      color: white;
+    }
+  }
+  .delete-btn {
+    // border: 1px solid tomato;
+    background-color: tomato;
+    border: none;
+  }
+  .save-btn {
+    background-color: #3b5998;
+  }
+}
+
+.animateBtn:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+.animateBtn:active {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,33 @@
+.about-section {
+  position: absolute;
+  width: 30%;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  // margin: 0px 5px 5px 5px;
+  padding: 20px;
+
+  .about {
+    .name {
+      display: block;
+      font-size: 20px;
+      font-weight: 400;
+      text-align: center;
+    }
+    .user-information {
+      font-size: 16px;
+      margin-top: 20px;
+      icon {
+        margin-right: 15px;
+      }
+    }
+    .actions {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+  }
+}
