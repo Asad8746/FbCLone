@@ -5,6 +5,7 @@ import { peopleActions } from "./peopleActions";
 import { blockActions } from "./blockActions";
 import { authActions } from "./authActions";
 import { commentActions } from "./commentActions";
+import groupActions from "./groupActions";
 const whatToShow = (value) => {
   return (dispatch) => {
     dispatch({ type: "what_To_show", payload: value });
@@ -32,6 +33,7 @@ export default {
   ...peopleActions,
   ...blockActions,
   ...commentActions,
+  ...groupActions,
   whatToShow,
   eraseError,
   setError,

@@ -56,40 +56,7 @@ let ProfileSchema = new mongoose.Schema({
     type: [BlockedSchema],
     default: [],
   },
-  pages: {
-    type: [
-      {
-        _id: {
-          type: mongoose.Types.ObjectId,
-          required: true,
-          ref: "Page",
-        },
-        isAdmin: {
-          type: Boolean,
-          required: true,
-          default: false,
-        },
-      },
-    ],
-    default: [],
-  },
-  groups: {
-    type: [
-      {
-        _id: {
-          type: mongoose.Types.ObjectId,
-          required: true,
-          ref: "Group",
-        },
-        isAdmin: {
-          type: Boolean,
-          required: true,
-          default: false,
-        },
-      },
-    ],
-    default: [],
-  },
+
   about: {
     type: String,
     default: "",

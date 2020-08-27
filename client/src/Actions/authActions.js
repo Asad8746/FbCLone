@@ -22,19 +22,23 @@ const checkToken = () => {
           payload: {
             isAuthenticated: true,
             isLoading: false,
-            id: response.data,
+            id: response.data.id,
+            f_name: response.data.f_name,
+            l_name: response.data.l_name,
           },
-        });
-      } else {
-        dispatch({
-          type: "CHECK",
-          payload: { isAuthenticated: false, isLoading: false, id: "" },
         });
       }
     } catch (err) {
+      removeToken();
       dispatch({
         type: "CHECK",
-        payload: { isAuthenticated: false, isLoading: false, id: "" },
+        payload: {
+          isAuthenticated: false,
+          isLoading: false,
+          id: "",
+          f_name: "",
+          l_name: "",
+        },
       });
     }
   };

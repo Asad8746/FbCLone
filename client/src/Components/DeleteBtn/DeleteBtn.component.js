@@ -7,7 +7,7 @@ const DeleteBtn = ({ onDeleteBtnClick }) => {
       className="pageBtn animateBtn delete-btn"
       onClick={onDeleteBtnClick}
     >
-      <i class="trash icon btnIcon" id="delete-icon"></i>
+      <i className="trash icon btnIcon" id="delete-icon"></i>
     </button>
   );
 };

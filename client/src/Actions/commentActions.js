@@ -8,10 +8,10 @@ const deleteComment = (id, commentId, actionCreater) => {
         headers: { "x-auth-token": getToken() },
       });
 
-      const { comments } = response.data;
+      const { commentList, post } = response.data;
 
-      actionCreater(comments);
-      return dispatch({ type: "COMMENT_ON_POST", payload: response.data });
+      actionCreater(commentList);
+      return dispatch({ type: "COMMENT_ON_POST", payload: post });
     } catch (err) {
       console.log(err.response.data);
     }
@@ -30,10 +30,10 @@ const createComment = (id, comment, comments, actionCreater) => {
         }
       );
       if (response.status === 200) {
-        const { comments } = response.data;
-
-        actionCreater(comments);
-        return dispatch({ type: "COMMENT_ON_POST", payload: response.data });
+        const { commentList, post } = response.data;
+        console.log("Create Comment", response.data);
+        dispatch({ type: "COMMENT_ON_POST", payload: post });
+        actionCreater(commentList);
       }
     } catch (err) {
       console.log(err.message);

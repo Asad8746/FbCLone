@@ -21,17 +21,17 @@ const createPage = (formValues) => {
   return async (dispatch, getState) => {
     try {
       let formData = new FormData();
-      formData.append("page_name", formValues.page_name);
-      formData.append("page_description", formValues.page_description);
+      formData.append("name", formValues.name);
+      formData.append("description", formValues.description);
       if (getState().image) {
         formData.append("file", getState().image);
-        dispatch({ type: "SET_IMAGE", payload: null });
       }
       const response = await Api.post("/pages/", formData, {
         headers: { "x-auth-token": getToken() },
       });
       if (response.status === 201) {
-        history.push("/pages");
+        dispatch({ type: "SET_IMAGE", payload: null });
+        return history.push("/pages");
       }
     } catch (err) {
       console.log(err.message);

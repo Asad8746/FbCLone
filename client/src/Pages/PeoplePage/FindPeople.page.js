@@ -10,6 +10,7 @@ const FindPeople = ({ getPeople, peopleList, id, setReducer }) => {
     getPeople(id);
     return () => {
       setReducer({ type: "FETCH_PEOPLE", payload: [] });
+      setReducer({ type: "GET_PROFILE_BY_ID", payload: {} });
     };
   }, []);
 

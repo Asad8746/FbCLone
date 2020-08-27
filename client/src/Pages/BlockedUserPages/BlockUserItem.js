@@ -10,6 +10,7 @@ const BlockUserItem = ({ user }) => {
       <img
         class="ui avatar image"
         src={`http://localhost:5000/profile/profile_pic/${_id}`}
+        alt={`${f_name} ${l_name} Profile Dp`}
       />
       <div class="content">
         {f_name} {l_name}

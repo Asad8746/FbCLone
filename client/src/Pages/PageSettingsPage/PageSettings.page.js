@@ -6,33 +6,9 @@ import DeleteBtn from "../../Components/DeleteBtn/DeleteBtn.component";
 import "./pageSettings.style.scss";
 import { Redirect } from "react-router-dom";
 import CancelBtn from "../../Components/CancelBtn/CancelBtn.component";
+import FormField from "../../Components/FormField/FormField.component";
 
 const { getPage, deletePage, updatePage } = Actions;
-
-// Helper Functions
-
-// A Helper function which will render
-// error message if the field is touched and
-// error is defined
-const renderError = (meta) => {
-  if (meta.touched && meta.error) {
-    return <div className="ui negative message">{meta.error}</div>;
-  }
-};
-
-// A Helper Function which will render Field Component
-// with props passed from  reduxFrom.
-const renderField = ({ label, type, placeholder, input, meta }) => {
-  return (
-    <div className="field">
-      <label>
-        {label}
-        <input type={type} placeholder={placeholder} {...input} />
-      </label>
-      {renderError(meta)}
-    </div>
-  );
-};
 
 /* A function for validation which 
   will check that page_name and page_description 
@@ -63,14 +39,11 @@ const PageSettings = ({
   useEffect(() => {
     getPage(id);
   }, []);
-  const onSubmit = ({ page_name, page_description }) => {
-    if (
-      page_name === page.page_name &&
-      page_description === page.page_description
-    ) {
+  const onSubmit = ({ name, description }) => {
+    if (name === page.name && description === page.description) {
       return history.push(`/pages/${page._id}`);
     }
-    updatePage(page._id, { page_name, page_description });
+    updatePage(page._id, { name, description });
   };
   if (!page) {
     return <div className="ui active loader"></div>;
@@ -80,18 +53,20 @@ const PageSettings = ({
     <div className="page-form-container">
       <form className="ui form error" onSubmit={handleSubmit(onSubmit)}>
         <Field
-          component={renderField}
+          component={FormField}
           label="Page Name"
           type="text"
-          name="page_name"
+          name="name"
           placeholder="Enter Page Name"
+          required={true}
         />
         <Field
-          component={renderField}
+          component={FormField}
           label="Page Description"
           type="text"
-          name="page_description"
+          name="description"
           placeholder="Enter Page Description"
+          required={true}
         />
         <div className="page-settings-actions-container">
           <CancelBtn onCancelClick={() => history.goBack()} />

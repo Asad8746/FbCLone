@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Actions from "../../../../Actions";
 import { connect } from "react-redux";
-const { likePost, disLikePost } = Actions;
+const { likePost, disLikePost, checkLike } = Actions;
 const renderIcon = (text, action) => {
   return (
     <span
@@ -17,27 +17,17 @@ const renderIcon = (text, action) => {
   );
 };
 
-const Like = ({ post, profile_id, likePost, disLikePost }) => {
+const Like = ({ post, likePost, disLikePost }) => {
   const [postisLiked, setPostisLiked] = useState(false);
   const onLikeClick = () => {
-    likePost(post._id);
-    setPostisLiked(true);
+    likePost(post._id, setPostisLiked);
   };
   const ondisLikeClick = () => {
-    disLikePost(post._id);
-    setPostisLiked(false);
+    disLikePost(post._id, setPostisLiked);
   };
 
-  const checkLike = () => {
-    let check = post.likes.find((profile) => {
-      return profile._id === profile_id;
-    });
-    if (check) {
-      setPostisLiked(true);
-    }
-  };
   useEffect(() => {
-    checkLike();
+    checkLike(post._id, setPostisLiked);
   }, []);
 
   return (

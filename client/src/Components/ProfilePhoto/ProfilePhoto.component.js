@@ -3,8 +3,7 @@ import { connect } from "react-redux";
 import "./profilephoto.style.scss";
 import history from "../../history";
 
-const ProfilePhoto = ({ id, isUser, imageUpdated }) => {
-  console.log(imageUpdated);
+const ProfilePhoto = ({ id, isUser }) => {
   if (!isUser) {
     return (
       <>
@@ -18,7 +17,6 @@ const ProfilePhoto = ({ id, isUser, imageUpdated }) => {
       </>
     );
   }
-
   return (
     <div className="profile-pic">
       <img
@@ -41,7 +39,7 @@ const ProfilePhoto = ({ id, isUser, imageUpdated }) => {
 
 const mapStateToProps = (state) => {
   return {
-    id: state.Profile._id,
+    id: state.profileReducer.profile._id,
     isUser: state.isUser,
     imageUpdated: state.imageUpdated,
   };

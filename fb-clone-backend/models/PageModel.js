@@ -3,17 +3,17 @@ const LikeSchema = require("./Likes");
 const AdminSchema = require("./AdminSchema");
 
 const pageSchema = new mongoose.Schema({
-  page_name: {
+  name: {
     type: String,
     required: true,
     minlength: 3,
     maxlength: 255,
   },
-  page_cover: {
-    Data: Buffer,
+  cover: {
+    data: Buffer,
     contentType: String,
   },
-  page_description: {
+  description: {
     type: String,
     required: true,
     minlength: 3,

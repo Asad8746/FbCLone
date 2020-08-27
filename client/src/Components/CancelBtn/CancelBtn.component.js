@@ -7,7 +7,7 @@ const CancelBtn = ({ onCancelClick }) => {
       type="button"
       onClick={onCancelClick}
     >
-      <i class="arrow left icon btnIcon"></i>
+      <i className="arrow left icon btnIcon"></i>
     </button>
   );
 };

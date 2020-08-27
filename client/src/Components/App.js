@@ -23,6 +23,12 @@ import BlockMessage from "../Pages/BlockedUserPages/BlockMessage.page";
 import BlockedUserPage from "../Pages/BlockedUserPages/BlockedUsers.page";
 import ProfileEditPage from "../Pages/ProfileEditPage/ProfileEdit.page";
 import ConfirmPasswordModal from "./ConfirmPasswordModal/ConfirmPassModal";
+import GroupMainPage from "../Pages/GroupPages/GroupMainPage";
+import CreateGroupPage from "../Pages/GroupPages/CreateGroupPage";
+import GroupPage from "../Pages/GroupPages/GroupPage";
+import GroupRequestModal from "../Pages/GroupPages/RequestModal";
+import GroupSettingPage from "../Pages/GroupPages/GroupSettingPage";
+import GroupMembersModal from "../Pages/GroupPages/MembersModal";
 
 const { checkToken } = Actions;
 class App extends React.Component {
@@ -69,7 +75,24 @@ class App extends React.Component {
                 <Route exact path="/pages/:id" component={Page} />
                 <Route exact path="/blocked/message" component={BlockMessage} />
                 <Route exact path="/confirm" component={ConfirmPasswordModal} />
-
+                <Route exact path="/groups" component={GroupMainPage} />
+                <Route exact path="/groups/:id" component={GroupPage} />
+                <Route exact path="/group/create" component={CreateGroupPage} />
+                <Route
+                  exact
+                  path={"/groups/:id/settings"}
+                  component={GroupSettingPage}
+                />
+                <Route
+                  exact
+                  path="/group/requests/:id"
+                  component={GroupRequestModal}
+                />
+                <Route
+                  exact
+                  path="/group/members/:id"
+                  component={GroupMembersModal}
+                />
                 <Route
                   exact
                   path="/blocked/users"

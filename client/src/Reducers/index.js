@@ -13,12 +13,13 @@ import uploadProgress from "./uploadProgress";
 import errorReducer from "./setError";
 import blockedUserReducer from "./blockedUser";
 import pagesReducer from "./pages";
+import groupReducer from "./groupReducer";
 import { reducer as FormReducer } from "redux-form";
 
 export default combineReducers({
   Authentication: authReducer,
   form: FormReducer,
-  Profile: profileReducer,
+  profileReducer,
   post: postReducer,
   peopleList: getPeople,
   isFollower,
@@ -30,5 +31,6 @@ export default combineReducers({
   uploadProgress,
   error: errorReducer,
   pages: pagesReducer,
+  group: groupReducer,
   blocked: blockedUserReducer,
 });

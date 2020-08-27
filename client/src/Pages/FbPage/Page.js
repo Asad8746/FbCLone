@@ -59,13 +59,16 @@ const Page = ({
   return (
     <div className="page-container">
       <CoverPhoto
-        urlToImage={`http://localhost:5000/pages/${page._id}/cover`}
+        urlToImage={`http://localhost:5000/pages/${
+          page._id
+        }/cover?${Date.now()}`}
         alt={page.page_name}
         isAuthUser={checkAuthorization(page.page_admin_id, auth_id)}
+        uploadUrl={`/pages/upload/cover/${page._id}`}
       />
       <PageAbout
-        title={page.page_name}
-        description={page.page_description}
+        title={page.name}
+        description={page.description}
         actions={renderActions()}
         count={renderLikes()}
       />

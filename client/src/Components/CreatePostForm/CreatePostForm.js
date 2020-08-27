@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { reduxForm, Field, reset } from "redux-form";
 import { connect } from "react-redux";
 import Actions from "../../Actions";
@@ -39,9 +39,6 @@ class CreatePostForm extends React.Component {
   };
 
   render() {
-    console.log(this.props.urlToPost);
-
-    console.log(this.props);
     return (
       <div className="create-form">
         <h4>Create Post</h4>

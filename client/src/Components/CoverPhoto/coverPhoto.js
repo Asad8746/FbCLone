@@ -3,20 +3,15 @@ import { connect } from "react-redux";
 import history from "../../history";
 import "./coverphoto.style.scss";
 
-const CoverPhoto = ({ isAuthUser, alt, urlToImage }) => {
+const CoverPhoto = ({ isAuthUser, alt, urlToImage, uploadUrl }) => {
   return (
     <>
-      <img
-        // src={`http://localhost:5000/profile/cover/${id}?${Date.now()}`}
-        className="cover-image"
-        src={urlToImage}
-        alt={`${alt} Cover Pic`}
-      />
+      <img className="cover-image" src={urlToImage} alt={`${alt} Cover Pic`} />
       {isAuthUser ? (
         <span
           className="action-box"
           onClick={() => {
-            history.push("/upload", { uploadUrl: "/profile/upload/cover" });
+            history.push("/upload", { uploadUrl });
           }}
         >
           <i className="camera icon" id="action-icon"></i>

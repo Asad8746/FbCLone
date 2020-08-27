@@ -7,10 +7,12 @@ const { followProfile, unfollowProfile, checkFollower } = Actions;
 
 const FollowBtn = ({ id, followProfile, unfollowProfile }) => {
   const [isFollower, setIsFollower] = useState(null);
-  console.log(id);
   useEffect(() => {
-    checkFollower(id, setIsFollower);
-  }, [isFollower]);
+    if (id) {
+      checkFollower(id, setIsFollower);
+    }
+  }, []);
+  useEffect(() => {}, [isFollower]);
   if (isFollower === null) {
     return <div>loading</div>;
   }
@@ -35,13 +37,4 @@ const FollowBtn = ({ id, followProfile, unfollowProfile }) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    followers: state.Profile.followers,
-    isfollower: state.isFollower,
-  };
-};
-
-export default connect(mapStateToProps, { followProfile, unfollowProfile })(
-  FollowBtn
-);
+export default connect(null, { followProfile, unfollowProfile })(FollowBtn);

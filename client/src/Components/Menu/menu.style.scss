@@ -9,7 +9,14 @@
   color: white;
   font-size: 26px;
 }
-
+.user-name {
+  color: white;
+  font-size: 15px;
+  text-transform: capitalize;
+  padding-left: 5px;
+  font-weight: 500;
+  cursor: pointer;
+}
 #drop-down-menu {
   padding: 0;
   border: none;

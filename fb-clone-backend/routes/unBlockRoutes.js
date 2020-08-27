@@ -1,11 +1,15 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const auth = require("../Middleware/auth");
+const asyncMiddleware = require("../Middleware/asyncMiddleware");
+
 const ProfileModel = mongoose.model("Profile");
 const router = express.Router();
 
-router.put("/:_id", auth, async (req, res) => {
-  try {
+router.put(
+  "/:_id",
+  auth,
+  asyncMiddleware(async (req, res) => {
     const { _id } = req.params;
     const { profile: profile_id } = req.user;
     let { blocked_users } = await ProfileModel.findById({
@@ -48,10 +52,7 @@ router.put("/:_id", auth, async (req, res) => {
       }
     );
     res.status(200).send(userProfile.blocked_users);
-  } catch (err) {
-    console.log(err.message);
-    res.status(400).send(err.message);
-  }
-});
+  })
+);
 
 module.exports = router;

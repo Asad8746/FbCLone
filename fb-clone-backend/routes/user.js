@@ -4,13 +4,15 @@ const {
   validateAuthUser,
   validateRegisterUser,
 } = require("../models/user");
+
+const asyncMiddleware = require("../Middleware/asyncMiddleware");
 const bcrypt = require("bcrypt");
 const ProfileModel = require("../models/profile");
-const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
-  try {
+router.post(
+  "/register",
+  asyncMiddleware(async (req, res) => {
     let { error } = validateRegisterUser(req.body);
     if (error) return res.status(400).send(error.details[0].message);
     let user = await UserModel.findOne({ email: req.body.email });
@@ -32,32 +34,34 @@ router.post("/register", async (req, res) => {
     return res
       .header("x-auth-token", user.genToken())
       .status(200)
-      .send({ id: userProfile._id });
-  } catch (ex) {
-    console.log(ex.message);
-  }
-});
+      .send({
+        id: userProfile._id,
+        f_name: userProfile.f_name,
+        l_name: userProfile.l_name,
+      });
+  })
+);
 
-router.post("/auth", async (req, res) => {
-  try {
+router.post(
+  "/auth",
+  asyncMiddleware(async (req, res) => {
     const { error } = validateAuthUser(req.body);
     if (error) return res.status(400).send(error.details[0].message);
     const user = await UserModel.findOne({ email: req.body.email });
+    const profile = await ProfileModel.findById({ _id: user.profile_id });
     if (!user) return res.status(400).send("Incorrect Email or Password");
     let passwordIsCorrect = await bcrypt.compare(
       req.body.password,
       user.password
     );
     if (!passwordIsCorrect)
-      return res.status(400).send("Invalid Email or Password");
-    return res
-      .header("x-auth-token", user.genToken())
-      .status(200)
-      .send({ id: user.profile_id });
-  } catch (ex) {
-    console.log(ex.message);
-    res.sendStatus(400).send(ex);
-  }
-});
+      return res.status(401).send("Invalid Email or Password");
+    return res.header("x-auth-token", user.genToken()).status(200).send({
+      id: user.profile_id,
+      f_name: profile.f_name,
+      l_name: profile.l_name,
+    });
+  })
+);
 
 module.exports = router;

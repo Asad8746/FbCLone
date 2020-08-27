@@ -12,8 +12,8 @@ const BlockedUsers = ({ getAllBlockedUsers, blockedUsers }) => {
   return (
     <div className="ui container">
       <div className="ui segment">
-        <h3 class="ui center aligned header">BLOCKED USERS</h3>
-        <div class="ui middle aligned divided list">
+        <h3 className="ui center aligned header">BLOCKED USERS</h3>
+        <div className="ui middle aligned divided list">
           {blockedUsers.map((item) => {
             return <BlockUserItem user={item._id} />;
           })}

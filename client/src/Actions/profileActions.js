@@ -54,6 +54,7 @@ const followProfile = (id, callback) => {
         }
       );
       if (response.status === 200) {
+        console.log(response.data);
         dispatch({ type: "FOLLOW_USER", payload: response.data });
         callback(true);
       }
@@ -83,12 +84,42 @@ const unfollowProfile = (id, callback) => {
   };
 };
 export const checkFollower = async (id, callback) => {
-  const response = await Api.get(`/follower/checkfollower/${id}`, {
-    headers: { "x-auth-token": getToken() },
-  });
-  if (response.status === 200) {
-    callback(response.data);
+  try {
+    const response = await Api.get(`/follower/checkfollower/${id}`, {
+      headers: { "x-auth-token": getToken() },
+    });
+    if (response.status === 200) {
+      callback(response.data);
+    }
+  } catch (err) {
+    console.log(err.message);
   }
+};
+
+export const getFollowers = (id) => {
+  return async (dispatch) => {
+    try {
+      const response = await Api.get(`/profile/${id}/followers`, {
+        headers: { "x-auth-token": getToken() },
+      });
+      dispatch({ type: "GET_FOLLOWERS", payload: response.data });
+    } catch (err) {
+      console.log(err.response.data);
+    }
+  };
+};
+
+export const getFollowing = (id) => {
+  return async (dispatch) => {
+    try {
+      const response = await Api.get(`/profile/${id}/following`, {
+        headers: { "x-auth-token": getToken() },
+      });
+      dispatch({ type: "GET_FOLLOWING", payload: response.data });
+    } catch (err) {
+      console.log(err.response.data);
+    }
+  };
 };
 
 const uploadPhoto = (file, link) => {
@@ -104,7 +135,7 @@ const uploadPhoto = (file, link) => {
         },
       });
       if (response.status === 201) {
-        dispatch({ type: "IMAGE_UPDATED", payload: true });
+        dispatch({ type: "SET_IMAGE", payload: null });
         return history.goBack();
       }
     } catch (err) {
@@ -159,4 +190,6 @@ export const profileActions = {
   uploadPhoto,
   updateProfile,
   deleteProfile,
+  getFollowers,
+  getFollowing,
 };

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ProfileEditHeader from "./ProfileEditHeader";
-import { reduxForm, Field, formValues } from "redux-form";
+import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import DeleteBtn from "../../Components/DeleteBtn/DeleteBtn.component";
 import CancelBtn from "../../Components/CancelBtn/CancelBtn.component";
@@ -81,7 +81,7 @@ const ProfileEditPage = ({ getProfile, setReducer, profile, handleSubmit }) => {
 };
 
 const mapStateToProps = (state) => {
-  const profile = state.Profile;
+  const profile = state.profileReducer.profile;
   return { initialValues: profile, profile };
 };
 
@@ -89,6 +89,7 @@ const formWrapped = reduxForm({
   form: "ProfileEditPage",
   enableReinitialize: true,
 })(ProfileEditPage);
+
 export default connect(mapStateToProps, { getProfile, setReducer })(
   formWrapped
 );

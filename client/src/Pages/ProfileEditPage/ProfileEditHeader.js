@@ -4,7 +4,7 @@ const ProfileEditHeader = () => {
   return (
     <>
       <h3 className="ui center aligned header">
-        <i class="settings icon"></i>
+        <i className="settings icon"></i>
         Profile Settings
       </h3>
     </>

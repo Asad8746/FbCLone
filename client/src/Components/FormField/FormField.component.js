@@ -1,10 +1,5 @@
 import React from "react";
-
-const renderValidationError = ({ touched, error }) => {
-  if (touched && error) {
-    return <div className="ui error message">{error}</div>;
-  }
-};
+import FormError from "./FormError.component";
 
 const FormField = ({
   label,
@@ -16,12 +11,11 @@ const FormField = ({
   required,
 }) => {
   const className = !required ? "field" : "required field";
-
   return (
     <div className={className}>
       <label>{label}</label>
       <input type={type} name={name} placeholder={placeholder} {...input} />
-      {renderValidationError(meta)}
+      <FormError meta={meta} />
     </div>
   );
 };

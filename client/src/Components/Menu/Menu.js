@@ -1,13 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import Actions from "../../Actions";
-import DropDownItem from "./DropDownItem";
+import DropDownMenu from "./DropDownMenu";
 
 import "./menu.style.scss";
-const { logout, setReducer } = Actions;
 
-const Menu = ({ isAuthenticated, id, logout, ...rest }) => {
+const Menu = ({ isAuthenticated, id, f_name, l_name, ...rest }) => {
   return (
     <div className="ui pointing menu blue-menu">
       <Link to="/" className="item">
@@ -29,45 +27,22 @@ const Menu = ({ isAuthenticated, id, logout, ...rest }) => {
                 <i className="home icon" id="icon"></i>
               </Link>
             </div>
-            <div className="item">
-              <Link to={`/profile/${id}`}>
-                <i className="user circle icon" id="icon"></i>
-              </Link>
-            </div>
+            <Link className="item" to={`/profile/${id}`}>
+              <img
+                className="ui avatar image"
+                src={`http://localhost:5000/profile/profile_pic/${id}`}
+                alt={`${f_name} ${l_name} Dp`}
+              />
+              <p className="user-name">{`${f_name} ${l_name}`}</p>
+            </Link>
+
             <div className="item">
               <Link to="/people">
                 <i className="users icon" id="icon"></i>
               </Link>
             </div>
             <div className="item">
-              <div className="ui compact menu" id="drop-down-menu">
-                <div className="ui simple dropdown item" id="drop-down">
-                  <i className="dropdown icon"></i>
-                  <div className="menu">
-                    <DropDownItem
-                      label="Edit Your Profile"
-                      link="/edit"
-                      divide
-                    />
-                    <DropDownItem
-                      label="Blocked Users"
-                      link="/blocked/users"
-                      divide
-                    />
-                    <DropDownItem label="Pages" link="/pages" />
-                    <DropDownItem label="Groups" link="/somethign" divide />
-                    <div
-                      className="item"
-                      onClick={() => {
-                        logout();
-                        setReducer({ type: "GET_PROFILE", payload: {} });
-                      }}
-                    >
-                      Logout
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <DropDownMenu />
             </div>
           </>
         )}
@@ -80,7 +55,9 @@ const mapStateToProps = (state) => {
   return {
     isAuthenticated: state.Authentication.isAuthenticated,
     id: state.Authentication.id,
+    f_name: state.Authentication.f_name,
+    l_name: state.Authentication.l_name,
   };
 };
 
-export default connect(mapStateToProps, { logout })(Menu);
+export default connect(mapStateToProps)(Menu);

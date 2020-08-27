@@ -20,10 +20,10 @@ const FollowUser = ({ following, followers, whatToShow }) => {
           TimeLine
         </li>
         <li onClick={() => whatToShow("followers")}>
-          {followers.length} Followers
+          {followers} {followers in [1, 0] ? "Follower" : "Followers"}
         </li>
         <li onClick={() => whatToShow("following")}>
-          {following.length} Following
+          {following} {following in [1, 0] ? "Following" : "Followings"}
         </li>
       </ul>
     </div>
@@ -32,8 +32,8 @@ const FollowUser = ({ following, followers, whatToShow }) => {
 
 const mapStateToProps = (state) => {
   return {
-    followers: state.Profile.followers,
-    following: state.Profile.following,
+    followers: state.profileReducer.profile.followers,
+    following: state.profileReducer.profile.following,
   };
 };
 

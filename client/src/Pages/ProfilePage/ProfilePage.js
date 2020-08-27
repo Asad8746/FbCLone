@@ -1,7 +1,8 @@
 import React from "react";
 import About from "../../Components/ProfileComponent/ProfileSideBar/ProfileAbout/ProfileAbout";
 import Header from "../../Components/Header/Header";
-import List from "../../Components/ProfileComponent/FollowerList.component";
+import FollowerComponent from "../../Components/FollowerList/FollowersComponent";
+import FollowingComponent from "../../Components/FollowingList/Following.component";
 import Actions from "../../Actions";
 
 import { connect } from "react-redux";
@@ -21,9 +22,6 @@ class Profile extends React.Component {
   componentDidMount() {
     const { id } = this.props.match.params;
     if (this.props.id !== id) {
-      console.log(this.props.id);
-      console.log(id);
-      console.log("i am running");
       this.props.checkBlocked(id);
     } else {
       this.props.setReducer({
@@ -68,13 +66,9 @@ class Profile extends React.Component {
       timeline: (
         <TimeLine isAuthUser={isUser} posts={posts} urlToPost="/posts/create" />
       ),
-      followers: <List list={profile.followers} />,
-      following: <List list={profile.following} />,
+      followers: <FollowerComponent id={_id} />,
+      following: <FollowingComponent id={_id} />,
     };
-    if (!profile) {
-      return <div>Loading </div>;
-    }
-    console.log(_id);
     return (
       <div className="profile_box">
         <Header />
@@ -99,7 +93,7 @@ class Profile extends React.Component {
 const mapStateToProps = (state) => {
   return {
     display: state.display,
-    profile: state.Profile,
+    profile: state.profileReducer.profile,
     posts: state.Posts,
     id: state.Authentication.id,
     isUser: state.isUser,

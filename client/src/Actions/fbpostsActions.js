@@ -62,7 +62,7 @@ const updatePost = (description, url) => {
   };
 };
 
-const likePost = (id) => {
+const likePost = (id, setState) => {
   return async (dispatch) => {
     const response = await Api.put(
       `/posts/like/${id}`,
@@ -73,11 +73,25 @@ const likePost = (id) => {
     );
     if (response.status === 200) {
       dispatch({ type: "LIKE_POST", payload: response.data });
+      setState(true);
     }
   };
 };
+const checkLike = async (post_id, setState) => {
+  try {
+    const response = await Api.get(`/posts/${post_id}/check/like`, {
+      headers: { "x-auth-token": getToken() },
+    });
+    if (response.data) {
+      return setState(true);
+    }
+    return setState(false);
+  } catch (err) {
+    console.log(err.response.data);
+  }
+};
 
-const disLikePost = (id) => {
+const disLikePost = (id, setState) => {
   return async (dispatch) => {
     const response = await Api.put(
       `/posts/dislike/${id}`,
@@ -87,6 +101,7 @@ const disLikePost = (id) => {
       }
     );
     dispatch({ type: "DISLIKE_POST", payload: response.data });
+    setState(false);
   };
 };
 export const createPost = (post, file, urlToPost) => {
@@ -114,4 +129,5 @@ export const fbPostActions = {
   likePost,
   disLikePost,
   createPost,
+  checkLike,
 };

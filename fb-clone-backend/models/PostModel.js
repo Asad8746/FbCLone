@@ -12,19 +12,28 @@ const postSchema = new mongoose.Schema({
   belongsTo: {
     type: String,
     enum: ["page", "group", ""],
-    default: null,
+    default: "",
   },
-  belongsToId: {
+  pageId: {
     type: mongoose.Types.ObjectId,
     required: function () {
-      return this.belongsTo !== "";
+      return this.belongsTo === "page";
     },
+    ref: "Page",
+  },
+  groupId: {
+    type: mongoose.Types.ObjectId,
+    required: function () {
+      return this.belongsTo === "group";
+    },
+    ref: "Group",
   },
   author_id: {
     type: mongoose.SchemaTypes.ObjectId,
     required: function () {
-      return this.belongsTo === "";
+      return this.belongsTo === "" || this.belongsTo === "group";
     },
+    ref: "Profile",
   },
   image: {
     data: Buffer,

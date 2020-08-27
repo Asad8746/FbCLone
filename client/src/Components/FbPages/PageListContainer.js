@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 
 import Actions from "../../Actions";
-import PagesList from "./PagesList";
+import PagesList from "../PageOrGroupList/List";
 const { getPages, setReducer } = Actions;
 
 const PageContainer = ({ url, getPages, pages, setReducer }) => {
@@ -16,7 +16,7 @@ const PageContainer = ({ url, getPages, pages, setReducer }) => {
     };
   }, [url]);
 
-  return <PagesList pages={pages} />;
+  return <PagesList data={pages} source="pages" />;
 };
 
 const mapStateToProps = (state) => {

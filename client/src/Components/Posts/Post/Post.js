@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import history from "../../../history";
 import Like from "./Like/Like.Component";
 import Comment from "./Comment/Comment.Component";
 import Actions from "../../../Actions";
 import { connect } from "react-redux";
+import ReactEmoji from "react-emoji";
 
 import "./post.style.scss";
 import { Link } from "react-router-dom";
@@ -16,33 +17,71 @@ const showComment = (commentStyle, setCommentStyle) => {
     : setCommentStyle("none");
 };
 const showDeleteButton = (post, authenticatedUserId) => {
-  if (post.author_id) {
-    return authenticatedUserId === post.author_id._id;
+  let check = false;
+  if (
+    post.belongsTo === "group" &&
+    post.groupId.group_admin_id === authenticatedUserId
+  ) {
+    check = true;
   }
-  if (post.belongsTo === "page") {
-    return post.belongsToId.page_admin_id === authenticatedUserId;
+  if (post.author_id && authenticatedUserId === post.author_id._id) {
+    check = true;
   }
+  if (
+    post.belongsTo === "page" &&
+    post.pageId.page_admin_id === authenticatedUserId
+  ) {
+    check = true;
+  }
+  return check;
 };
 
 // Post Component
-const Post = ({ post, authenticatedUserId, deletePost, deletePagePost }) => {
+const Post = ({
+  isMember,
+  post,
+  authenticatedUserId,
+  deletePost,
+  deletePagePost,
+}) => {
   // State to show Comment box if clicked
   const [commentStyle, setCommentStyle] = useState("none");
 
   // Extracting fields from Props
   const { belongsTo } = post;
-  const name =
-    belongsTo === "page"
-      ? post.belongsToId.page_name
-      : ` ${post.author_id.f_name} ${post.author_id.l_name}`;
+  let name;
+  if (belongsTo === "page") {
+    name = post.pageId.name;
+  } else if (belongsTo === "group" || belongsTo === "") {
+    name = ` ${post.author_id.f_name} ${post.author_id.l_name}`;
+  }
   let date = new Date(post.date);
 
   // Functions
   const onDeleteBtnClick = () => {
     if (belongsTo === "page") {
-      deletePagePost(post.belongsToId._id, post._id);
+      deletePagePost(post.pageId._id, post._id);
     } else {
       deletePost(post._id);
+    }
+  };
+  const renderComment = () => {
+    if (post.belongsTo === "page" || post.belongsTo === "") {
+      return (
+        <div className="extra content" style={{ display: commentStyle }}>
+          {commentStyle === "inline-block" ? (
+            <Comment postId={post._id} />
+          ) : null}
+        </div>
+      );
+    } else {
+      return isMember ? (
+        <div className="extra content" style={{ display: commentStyle }}>
+          {commentStyle === "inline-block" ? (
+            <Comment postId={post._id} />
+          ) : null}
+        </div>
+      ) : null;
     }
   };
   return (
@@ -73,7 +112,7 @@ const Post = ({ post, authenticatedUserId, deletePost, deletePagePost }) => {
           </span>
         ) : null}
         <div className="description">
-          <p>{post.description}</p>
+          <p>{ReactEmoji.emojify(post.description)}</p>
         </div>
         <div className="meta date">{date.toDateString()}</div>
       </div>
@@ -86,10 +125,10 @@ const Post = ({ post, authenticatedUserId, deletePost, deletePagePost }) => {
       ) : null}
       <div className="extra content extra-content">
         <span className="left floated">
-          <p>{post.likes.length} Likes</p>
+          <p>{post.likes} Likes</p>
         </span>
         <span className="right floated">
-          <p> {post.comments.length} Comments</p>
+          <p> {post.comments} Comments</p>
         </span>
       </div>
       <div className="extra content">
@@ -105,9 +144,7 @@ const Post = ({ post, authenticatedUserId, deletePost, deletePagePost }) => {
           Comment
         </span>
       </div>
-      <div className="extra content" style={{ display: commentStyle }}>
-        {commentStyle === "inline-block" ? <Comment id={post._id} /> : null}
-      </div>
+      {renderComment()}
     </div>
   );
 };
@@ -115,6 +152,7 @@ const Post = ({ post, authenticatedUserId, deletePost, deletePagePost }) => {
 const mapStateToProps = (state) => {
   return {
     authenticatedUserId: state.Authentication.id,
+    isMember: state.group.isMember,
   };
 };
 

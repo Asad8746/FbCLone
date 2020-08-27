@@ -1,11 +1,15 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import "./secondaryNav.style.scss";
-const SecondaryNav = ({ itemList }) => {
+const SecondaryNav = ({ itemList, rightMenu }) => {
   const renderItem = () => {
-    return itemList.map((item) => {
+    return itemList.map((item, index) => {
       return (
-        <div className="item" id={item.styleId} onClick={item.onItemClick}>
+        <div
+          className="item"
+          id={item.styleId}
+          onClick={item.onItemClick}
+          key={index}
+        >
           {item.title}
         </div>
       );
@@ -14,11 +18,7 @@ const SecondaryNav = ({ itemList }) => {
   return (
     <div className="navBar">
       {renderItem()}
-      <div className="right-menu">
-        <Link className="item" to="/pages/new">
-          Create New Page
-        </Link>
-      </div>
+      {rightMenu ? rightMenu : null}
     </div>
   );
 };

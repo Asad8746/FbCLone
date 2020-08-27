@@ -4,8 +4,8 @@ import Actions from "../../Actions";
 import { connect } from "react-redux";
 import ErrorComponent from "../ErrorComponent/errorComponent";
 import FormField from "../FormField/FormField.component";
+import RadioBtn from "../FormField/RadioButton";
 
-import RadioBtn from "../../Components/RadioBtn/RadioBtn.component";
 import "./signUp.style.scss";
 const { registerUser, eraseError } = Actions;
 
@@ -13,19 +13,7 @@ class RegisterUser extends React.Component {
   componentWillUnmount() {
     this.props.eraseError();
   }
-
-  renderRadioBtn = ({ type, input, label, ...rest }) => {
-    return (
-      <div className="field">
-        <label id="radio-label">
-          {" "}
-          <input type={type} {...input} {...rest} /> {label}
-        </label>
-      </div>
-    );
-  };
   onSubmit = (formValues) => {
-    console.log(formValues);
     this.props.registerUser(formValues);
   };
   render() {
@@ -95,7 +83,7 @@ class RegisterUser extends React.Component {
           </div>
           <ErrorComponent />
           <div className="btn-box">
-            <button className="ui button " id="sign-up-btn">
+            <button type="submit" className="ui button " id="sign-up-btn">
               Sign up
             </button>
           </div>
@@ -105,19 +93,23 @@ class RegisterUser extends React.Component {
   }
 }
 
-const validate = ({ f_name, l_name, email, password, gender }) => {
+const validate = ({ f_name, l_name, email, password, about, gender }) => {
   let errors = {};
   if (!f_name) {
-    errors.f_name = "First Name is not suppose to be Empty";
+    errors.f_name = "First Name is required";
   }
   if (!l_name) {
-    errors.l_name = "Last Name is not suppose to be Empty";
+    errors.l_name = "Last Name is required";
   }
   if (!email) {
-    errors.email = "Email is not suppose to be Empty";
+    errors.email = "Email is required";
   }
   if (!password) {
-    errors.password = "Password is not suppose to be Empty";
+    errors.password = "Password is required";
+  }
+
+  if (!about) {
+    errors.about = "Please Tell us what you do?";
   }
   if (!gender) {
     errors.gender = "Please Specify your gender";

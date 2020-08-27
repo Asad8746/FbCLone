@@ -11,6 +11,7 @@ const Header = ({ name, id, isUser }) => {
         urlToImage={`http://localhost:5000/profile/cover/${id}?${Date.now()}`}
         alt={name}
         isAuthUser={isUser}
+        uploadUrl="/profile/upload/cover"
       />
       <div className="navbar">
         <div className="profile-pic_container">
@@ -24,8 +25,8 @@ const Header = ({ name, id, isUser }) => {
 
 const mapStateToProps = (state) => {
   return {
-    name: `${state.Profile.f_name} ${state.Profile.l_name}`,
-    id: state.Profile._id,
+    name: `${state.profileReducer.profile.f_name} ${state.profileReducer.profile.l_name}`,
+    id: state.profileReducer.profile._id,
     isUser: state.isUser,
   };
 };

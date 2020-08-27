@@ -3,29 +3,30 @@ const LikeSchema = require("./Likes");
 const joi = require("joi");
 
 const groupSchema = new mongoose.Schema({
-  group_name: {
+  name: {
     type: String,
     required: true,
     minlength: 3,
     maxlength: 255,
   },
-  group_cover: {
-    Data: Buffer,
+  cover: {
+    data: Buffer,
     contentType: String,
   },
-  group_description: {
+  description: {
     type: String,
     required: true,
     minlength: 3,
     maxlength: 255,
+  },
+  group_privacy: {
+    type: String,
+    enum: ["public", "private"],
+    default: "public",
   },
   created_on: {
     type: Date,
     default: Date.now(),
-  },
-  likes: {
-    type: [LikeSchema],
-    default: [],
   },
   group_admin_id: {
     type: mongoose.Types.ObjectId,
@@ -38,6 +39,32 @@ const groupSchema = new mongoose.Schema({
         _id: {
           type: mongoose.Types.ObjectId,
           required: true,
+          ref: "Profile",
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        isAdmin: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
+    default: [],
+  },
+  requests: {
+    type: [
+      {
+        _id: {
+          type: mongoose.Types.ObjectId,
+          required: true,
+          ref: "Profile",
+        },
+        name: {
+          type: String,
+          required: true,
+          minlength: 3,
         },
       },
     ],
@@ -60,8 +87,9 @@ const GroupModel = mongoose.model("Group", groupSchema);
 
 const validateGroup = (body) => {
   const schema = {
-    group_name: joi.string().required().min(2).max(255),
-    group_description: joi.string().required().min(2).max(255),
+    name: joi.string().required().min(2).max(255),
+    description: joi.string().required().min(2).max(255),
+    group_privacy: joi.string().required().valid("public", "private"),
   };
   return joi.validate(body, schema);
 };

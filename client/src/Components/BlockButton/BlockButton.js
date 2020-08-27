@@ -19,6 +19,6 @@ const BlockButton = ({ toBeBlockedId, blockUser }) => {
 };
 
 const mapStateToProps = (state) => {
-  return { toBeBlockedId: state.Profile._id };
+  return { toBeBlockedId: state.profileReducer.profile._id };
 };
 export default connect(mapStateToProps, { blockUser })(BlockButton);

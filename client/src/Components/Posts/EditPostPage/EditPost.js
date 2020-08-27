@@ -89,7 +89,7 @@ const EditPostComponent = ({ match, getPost, post, updatePost, ...rest }) => {
     if (post.belongsTo === "page") {
       return updatePost(
         description,
-        `http://localhost:5000/pages/${post.belongsToId}/post/${post._id}`
+        `http://localhost:5000/pages/${post.pageId}/post/${post._id}`
       );
     }
     return updatePost(

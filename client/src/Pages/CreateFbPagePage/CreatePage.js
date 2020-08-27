@@ -3,24 +3,8 @@ import "./form.style.scss";
 import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import Actions from "../../Actions";
+import FormField from "../../Components/FormField/FormField.component";
 const { setImage, createPage } = Actions;
-
-const renderError = (meta) => {
-  const { touched, error } = meta;
-  if (touched && error) {
-    return <div className="ui negative message">{error}</div>;
-  }
-};
-
-const renderField = ({ input, placeholder, label, meta }) => {
-  return (
-    <div class="field">
-      <label>{label}</label>
-      <input type="text" placeholder={placeholder} {...input} />
-      {renderError(meta)}
-    </div>
-  );
-};
 
 const CreatePageForm = ({
   setImage,
@@ -30,24 +14,28 @@ const CreatePageForm = ({
   ...rest
 }) => {
   const onSubmit = (formValues) => {
+    console.log(formValues);
+    console.log(image);
     createPage(formValues);
   };
   return (
     <div className="page-form-container">
       <form className="ui form error" onSubmit={handleSubmit(onSubmit)}>
         <Field
-          name="page_name"
-          component={renderField}
+          name="name"
+          component={FormField}
           label="Page Name"
           placeholder="Page Name"
+          required={true}
         />
         <Field
-          name="page_description"
-          component={renderField}
+          name="description"
+          component={FormField}
           label="Page Description"
           placeholder="Page Description"
+          required={true}
         />
-        <div className="ui field">
+        <div className="ui required field">
           <label htmlFor="PageCoverImage">Page Cover Image</label>
           <input
             type="file"
@@ -71,11 +59,11 @@ const mapStateToProps = (state) => {
 };
 const validation = (formValues) => {
   let errors = {};
-  if (!formValues.page_name) {
-    errors.page_name = "Name is required";
+  if (!formValues.name) {
+    errors.name = "Page Name is required";
   }
-  if (!formValues.page_description) {
-    errors.page_description = "Description is required";
+  if (!formValues.description) {
+    errors.description = "Description is required";
   }
   return errors;
 };
