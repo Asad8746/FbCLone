@@ -85,7 +85,6 @@ cd client && npm install
 
 ```shell
 # Runing the app
-# in the main folder Poetrify
 cd fb-clone-backend && npm start
 cd client && npm start
 ```
