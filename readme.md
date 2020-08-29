@@ -26,7 +26,7 @@ Frontend SPA is build using
 3. User can create/delete/update pages
 4. User can create/delete/update Groups and can add other members to that group.
 5. User can comment or like a post
-6. User can f ollow/unFollow/Block other Users.
+6. User can follow/unFollow/Block other Users.
 
 ## Demo
 
