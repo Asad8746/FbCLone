@@ -50,7 +50,8 @@ const ConfirmPassword = ({
       updateProfile({ ...formValues, confirmPassword });
     }
     if (operation === "delete") {
-      deleteProfile();
+      console.log("from modal", confirmPassword);
+      deleteProfile(confirmPassword);
     }
   };
 

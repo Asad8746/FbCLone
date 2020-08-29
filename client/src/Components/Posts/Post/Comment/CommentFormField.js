@@ -1,11 +1,13 @@
 import React from "react";
+import FormError from "../../../FormField/FormError.component";
 
 import "./commentForm.style.scss";
 
-const CommentFormField = ({ placeholder }) => {
+const CommentFormField = ({ placeholder, input, meta }) => {
   return (
     <div className="comment-input-container">
-      <input className="comment-input" placeholder={placeholder} />
+      <input className="comment-input" placeholder={placeholder} {...input} />
+      <FormError meta={meta} />
     </div>
   );
 };

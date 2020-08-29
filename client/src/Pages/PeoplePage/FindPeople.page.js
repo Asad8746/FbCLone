@@ -23,7 +23,7 @@ const FindPeople = ({ getPeople, peopleList, id, setReducer }) => {
       );
     }
     return peopleList.map((people) => {
-      return <PeopleItem people={people} />;
+      return <PeopleItem people={people} key={people._id} />;
     });
   };
   return (

@@ -24,8 +24,8 @@ router.get(
         { profile_id: { $in: following } },
         {
           $and: [
-            { profile_id: { $nin: blocked_by } },
-            { profile_id: { $nin: blocked_users } },
+            { author_id: { $nin: blocked_by } },
+            { author_id: { $nin: blocked_users } },
           ],
         },
       ],

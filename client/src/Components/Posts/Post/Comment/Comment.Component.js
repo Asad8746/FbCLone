@@ -38,6 +38,7 @@ const Comment = ({
 
   const onSubmit = (formValues) => {
     const { comment } = formValues;
+
     createComment(postId, comment, comments, setComments);
     reset("commentForm");
   };
@@ -52,7 +53,7 @@ const Comment = ({
           component={CommentFormField}
           placeholder="Enter your Comment"
         />
-        <button id="comment-btn">
+        <button id="comment-btn" type="submit">
           <i className="comments icon" id="comment-btn-icon"></i>
         </button>
       </form>

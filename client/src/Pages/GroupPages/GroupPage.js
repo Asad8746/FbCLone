@@ -44,6 +44,7 @@ const Group = ({
       setReducer({ type: "GET_POSTS", payload: [] });
     };
   }, []);
+
   const renderInfo = (checkIsAdmin) => {
     return (
       <>

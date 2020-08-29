@@ -1,3 +1,5 @@
 #dependencies
 /node_modules
+/config/test.json
 /config/development.json
+/tests

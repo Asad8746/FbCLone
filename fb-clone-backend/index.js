@@ -1,5 +1,6 @@
 const express = require("express");
 const winston = require("winston");
+const config = require("config");
 let app = express();
 
 require("./startup/logger")();

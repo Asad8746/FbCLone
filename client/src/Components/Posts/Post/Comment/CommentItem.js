@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import ReactEmoji from "react-emoji";
 import CommentDeleteBtn from "./CommentDeleteBtn";
 
 const CommentItem = ({ comment, onDeleteClick }) => {
@@ -23,7 +24,7 @@ const CommentItem = ({ comment, onDeleteClick }) => {
             {date.toDateString()}
           </span>
         </div>
-        <div className="text">{comment.comment}</div>
+        <div className="text">{ReactEmoji.emojify(comment.comment)}</div>
         <CommentDeleteBtn comment={comment} onDeleteClick={onDeleteClick} />
       </div>
     </div>

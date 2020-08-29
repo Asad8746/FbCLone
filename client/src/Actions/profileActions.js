@@ -161,20 +161,30 @@ const updateProfile = (formValues) => {
   };
 };
 
-const deleteProfile = () => {
+const deleteProfile = (confirmPassword) => {
   return async (dispatch) => {
     try {
-      const response = await Api.delete("/profile/delete", {
-        headers: { "x-auth-token": getToken() },
+      await Api.post(
+        "/profile/delete",
+        {
+          confirmPassword,
+        },
+        {
+          headers: { "x-auth-token": getToken() },
+        }
+      );
+      removeToken();
+      dispatch({
+        type: "CHECK",
+        payload: {
+          isAuthenticated: false,
+          isLoading: false,
+          id: "",
+          f_name: "",
+          l_name: "",
+        },
       });
-      if (response.status === 200) {
-        removeToken();
-        dispatch({
-          type: "CHECK",
-          payload: { isAuthenticated: false, isLoading: false, id: "" },
-        });
-        return history.push("/");
-      }
+      return history.push("/");
     } catch (err) {
       console.log(err.response.data);
     }

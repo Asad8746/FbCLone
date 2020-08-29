@@ -30,7 +30,7 @@ const Menu = ({ isAuthenticated, id, f_name, l_name, ...rest }) => {
             <Link className="item" to={`/profile/${id}`}>
               <img
                 className="ui avatar image"
-                src={`http://localhost:5000/profile/profile_pic/${id}`}
+                src={`http://localhost:5000/profile/profile_pic/${id}?${Date.now()}`}
                 alt={`${f_name} ${l_name} Dp`}
               />
               <p className="user-name">{`${f_name} ${l_name}`}</p>

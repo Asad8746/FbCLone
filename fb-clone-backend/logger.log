@@ -1,2 +1,18 @@
 {"message":"Listening to 5000...","level":"info"}
+{"message":"Listening to 5000...","level":"info"}
+{"message":"Listening to 5000...","level":"info"}
 {"message":"Connected to Database","level":"info"}
+{"message":"Listening to 5000...","level":"info"}
+{"message":"Connected to Database","level":"info"}
+{"level":"error","message":"Cannot read property 'profile_id' of null Cannot read property 'profile_id' of null","stack":"TypeError: Cannot read property 'profile_id' of null\n    at /home/anon/Desktop/ReactPro/facebookpro/fb-clone-backend/routes/user.js:51:61\n    at processTicksAndRejections (internal/process/task_queues.js:97:5)\n    at async /home/anon/Desktop/ReactPro/facebookpro/fb-clone-backend/Middleware/asyncMiddleware.js:4:7"}
+{"level":"error","message":"Cannot read property 'profile_id' of null Cannot read property 'profile_id' of null","stack":"TypeError: Cannot read property 'profile_id' of null\n    at /home/anon/Desktop/ReactPro/facebookpro/fb-clone-backend/routes/user.js:51:61\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (internal/process/task_queues.js:97:5)\n    at async /home/anon/Desktop/ReactPro/facebookpro/fb-clone-backend/Middleware/asyncMiddleware.js:4:7"}
+{"message":"Listening to 5000...","level":"info"}
+{"message":"Connected to Database","level":"info"}
+{"message":"Listening to 5000...","level":"info"}
+{"message":"Connected to Database","level":"info"}
+{"message":"Listening to 5000...","level":"info"}
+{"message":"Connected to Database","level":"info"}
+{"message":"Listening to 5000...","level":"info"}
+{"message":"Connected to Database","level":"info"}
+{"level":"error","message":"GroupModel.findOneAndRemove is not a function GroupModel.findOneAndRemove is not a function","stack":"TypeError: GroupModel.findOneAndRemove is not a function\n    at /home/anon/Desktop/ReactPro/facebookpro/fb-clone-backend/routes/profile.js:212:22\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (internal/process/task_queues.js:97:5)\n    at async /home/anon/Desktop/ReactPro/facebookpro/fb-clone-backend/Middleware/asyncMiddleware.js:4:7"}
+{"level":"error","message":"Cannot read property 'profile_id' of null Cannot read property 'profile_id' of null","stack":"TypeError: Cannot read property 'profile_id' of null\n    at /home/anon/Desktop/ReactPro/facebookpro/fb-clone-backend/routes/user.js:51:61\n    at runMicrotasks (<anonymous>)\n    at processTicksAndRejections (internal/process/task_queues.js:97:5)\n    at async /home/anon/Desktop/ReactPro/facebookpro/fb-clone-backend/Middleware/asyncMiddleware.js:4:7"}

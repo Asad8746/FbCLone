@@ -5,6 +5,7 @@ const confirmPasswordMiddle = require("../Middleware/confirmPassword");
 const { UserModel } = require("../models/user");
 const { PostModel } = require("../models/PostModel");
 const PageModel = require("../models/PageModel");
+const GroupModel = require("../models/GroupModel");
 const asyncMiddleware = require("../Middleware/asyncMiddleware");
 const router = express.Router();
 
@@ -50,13 +51,11 @@ router.get(
   asyncMiddleware(async (req, res) => {
     const profile = await ProfileModel.findById({ _id: req.user.profile });
     if (req.user)
-      return res
-        .status(200)
-        .send({
-          id: profile._id,
-          f_name: profile.f_name,
-          l_name: profile.l_name,
-        });
+      return res.status(200).send({
+        id: profile._id,
+        f_name: profile.f_name,
+        l_name: profile.l_name,
+      });
     return res.sendStatus(400);
   })
 );
@@ -201,7 +200,7 @@ router.put(
   })
 );
 
-router.delete(
+router.post(
   "/delete",
   [auth, confirmPasswordMiddle],
   asyncMiddleware(async (req, res) => {
@@ -210,6 +209,7 @@ router.delete(
     await UserModel.findByIdAndRemove({ _id: id });
     await PostModel.findOneAndRemove({ author_id: profile_id });
     await PageModel.findOneAndRemove({ page_admin_id: profile_id });
+    await GroupModel.findOneAndRemove({ group_admin_id: profile_id });
     res.sendStatus(200);
   })
 );

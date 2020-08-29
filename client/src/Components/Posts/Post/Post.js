@@ -89,6 +89,7 @@ const Post = ({
       <div
         className="ui header"
         id="header"
+        style={{ cursor: "pointer" }}
         onClick={(e) => {
           e.stopPropagation();
           if (belongsTo === "page")
@@ -125,10 +126,18 @@ const Post = ({
       ) : null}
       <div className="extra content extra-content">
         <span className="left floated">
-          <p>{post.likes} Likes</p>
+          <p>
+            {post.likes}{" "}
+            {post.likes === 0 || post.likes === 1 ? "Like" : "Likes"}
+          </p>
         </span>
         <span className="right floated">
-          <p> {post.comments} Comments</p>
+          <p>
+            {post.comments}{" "}
+            {post.comments === 0 || post.comments === 1
+              ? "Comment"
+              : "Comments"}
+          </p>
         </span>
       </div>
       <div className="extra content">

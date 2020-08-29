@@ -82,8 +82,9 @@ router.get(
   asyncMiddleware(async (req, res) => {
     const { id } = req.params;
     const group = await GroupModel.findById({ _id: id })
-      .select("-cover")
+      .select("-cover -posts")
       .populate("group_admin_id", "_id f_name l_name");
+    console.log(group);
     res.status(200).send({
       ...group._doc,
       members: group.members.length,

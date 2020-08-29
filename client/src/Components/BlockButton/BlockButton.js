@@ -1,14 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
 import Actions from "../../Actions";
-import "./blockButton.style.scss";
 
 const { blockUser } = Actions;
 // Block Button Component
 const BlockButton = ({ toBeBlockedId, blockUser }) => {
   return (
     <button
-      className="block-btn"
+      className="ui red button"
       onClick={() => {
         blockUser(toBeBlockedId);
       }}

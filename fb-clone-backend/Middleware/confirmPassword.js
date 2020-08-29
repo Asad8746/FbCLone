@@ -5,6 +5,7 @@ module.exports = async (req, res, next) => {
     const { confirmPassword, password } = req.body;
     const { id } = req.user;
     const user = await UserModel.findById({ _id: id });
+
     const passwordCheck = await bcrypt.compare(confirmPassword, user.password);
     if (passwordCheck) {
       if (password) {

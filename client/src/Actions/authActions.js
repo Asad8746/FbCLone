@@ -55,6 +55,7 @@ const LoginUser = ({ email, password }) => {
           type: "LOGIN_USER",
           payload: { isAuthenticated: true, id },
         });
+        console.log(response.data);
         history.push(`/profile/${id}`);
       }
     } catch (err) {
