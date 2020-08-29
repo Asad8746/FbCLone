@@ -62,7 +62,7 @@ Frontend SPA is build using
 
 #### Block User
 
-![Block a User](./demo/block.gif)
+![Block a User](./gif/block.gif)
 
 #### Upload a new Dp
 
