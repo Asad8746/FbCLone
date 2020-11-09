@@ -15,10 +15,10 @@ Backend Rest Api is powered by
 ### Frontend
 
 Frontend SPA is build using
-
 - React
-###State Management using
+State Management using
 - Redux
+
 
 ## Functionalities
 
