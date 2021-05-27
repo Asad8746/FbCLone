@@ -2,7 +2,7 @@
 
 ## Description
 
-A Web app Build using MERN
+A Social Media App with some Features Built using MERN
 
 ### Backend
 
@@ -10,82 +10,28 @@ Backend Rest Api is powered by
 
 - Expressjs for restful Api
 - MongodDb used as Database
+- Mongoose used as ORM
 - joi for validation
+- For RealTime Notification (Socket.io)
 
 ### Frontend
 
 Frontend SPA is build using
 
-- React
-- Redux
+- React (SPA)
+- Redux (State Managment)
+- Reat-Router-Dom (Routing)
 
 ## Functionalities
 
 1. User can Login / Register to Fb Clone (Authentication)
-2. User can create/delete/update posts
-3. User can create/delete/update pages
-4. User can create/delete/update Groups and can add other members to that group.
-5. User can comment or like a post
-6. User can f ollow/unFollow/Block other Users.
+2. User will receive a Notification whenever someone (like,comment) on your Posts , try to join a group etc.
+3. User can create/delete/update posts
+4. User can create/delete/update pages
+5. User can create/delete/update Groups and can add other members to that group.
+6. User can comment or like a post
+7. User can f ollow/unFollow/Block other Users.
 
-## Demo
+## Demo Link
 
-#### Sign Up
-
-![Sign Up](./gifs/signup.gif)
-
-### Login
-
-![Login](./gifs/login.gif)
-
-#### Post Functionalities
-
-#### Create a Post
-
-![Post](./gifs/post.gif)
-
-#### Leave a Like and Comment on a Post
-
-![Like/Comment](./gifs/likenComment.gif)
-
-#### Follow/UnFollow
-
-![Follow/UnFollow](./gifs/follow.gif)
-
-#### Create Groups
-
-![Groups](./gifs/Group.gif)
-
-#### Create Pages
-
-![Pages](./gifs/pages.gif)
-
-#### Block User
-
-![Block a User](./demo/block.gif)
-
-#### Upload a new Dp
-
-![Upload a new Dp](./gifs/profileDp.gif)
-
-#### Home Page
-
-![Home Page](./gifs/home.gif)
-
-## How To use this project
-
-```shell
-clone this project by
-git clone https://github.com/Asad8746/FbCLone
-
-# install all the dependencies
-cd fb-clone-backend && npm install
-cd client && npm install
-```
-
-```shell
-# Runing the app
-# in the main folder 
-cd fb-clone-backend && npm start
-cd client && npm start
-```
+[Link to FbClone App](https://agile-mountain-34206.herokuapp.com/)
