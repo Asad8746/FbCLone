@@ -19,29 +19,6 @@ router.delete(
   })
 );
 
-router.get(
-  "/:_id/posts",
-  auth,
-  asyncMiddleware(async (req, res) => {
-    const { _id } = req.params;
-    const page = await PageModel.findById({ _id }).select("_id");
-    if (!page) return res.sendStatus(404);
-    let posts = await PostModel.find({
-      pageId: page._id,
-      belongsTo: "page",
-    })
-      .populate("pageId", "_id name page_admin_id")
-      .select("-image");
-    posts = posts.map((item) => {
-      return {
-        ...item._doc,
-        comments: item.comments.length,
-        likes: item.likes.length,
-      };
-    });
-    res.status(200).send(posts);
-  })
-);
 // A Route for updating page likes
 /*
 First i am checking if a page with given id exists if no then 
@@ -54,8 +31,13 @@ router.put(
   "/like/:_id",
   auth,
   asyncMiddleware(async (req, res) => {
-    const { profile: profile_id } = req.user;
     const { _id } = req.params;
+    const { profile: profile_id } = req.user;
+    const profile = await ProfileModel.findById(profile_id).select(
+      "_id f_name l_name"
+    );
+    const { send } = req.notification;
+    if (!profile) return res.sendStatus(404);
     const page = await PageModel.findById({ _id });
     if (!page) res.sendStatus(404);
     const isLiked = page.likes.find((item) => {
@@ -64,6 +46,14 @@ router.put(
     if (isLiked) return res.status(400).send("already Liked");
     page.likes.push({ _id: profile_id });
     await page.save();
+    if (page.page_admin_id.toString() !== profile_id) {
+      await send({
+        notification: `${profile.f_name} ${profile.l_name} Liked Your Page  ${page.name}`,
+        noti_from_id: profile._id,
+        link: "http://something.com",
+        profile_id: page.page_admin_id,
+      });
+    }
     res.status(200).send(page.likes);
   })
 );
@@ -106,33 +96,9 @@ router.get(
     const page = await PageModel.findOne({
       _id,
       likes: { _id: profile_id },
-    }).select("_id name");
+    }).select("_id");
     if (page) return res.status(200).send(true);
-    return res.status(400).send(false);
-  })
-);
-// Route for updating page post
-router.put(
-  "/:page_id/post/:post_id",
-  [auth, pageAdmin],
-  asyncMiddleware(async (req, res) => {
-    const { error } = validatePost(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-    const { description } = req.body;
-    const { post_id } = req.params;
-    const { _id } = req.userPage;
-    await PostModel.findOneAndUpdate(
-      {
-        _id: post_id,
-        belongsTo: "page",
-        pageId: _id,
-      },
-      {
-        description,
-      },
-      { new: true }
-    );
-    res.sendStatus(200);
+    return res.status(200).send(false);
   })
 );
 
@@ -148,34 +114,33 @@ router.post(
     const { _id } = req.params;
 
     // Checking if a page with given Id exists
-    const page = await PageModel.findById({ _id }).select("_id page_admin_id");
+    const page = await PageModel.findById({ _id }).select(
+      "_id name page_admin_id"
+    );
     if (!page) return res.sendStatus(404);
 
     if (page.page_admin_id != profile_id) return res.sendStatus(400);
     const { description } = req.body;
 
-    let post;
-    if (!req.files) {
-      post = new PostModel({
-        // author_id: profile_id,
-        description,
-        belongsTo: "page",
-        pageId: page._id,
-      });
-    } else {
+    let post = {
+      description,
+      belongsTo: "page",
+      author_id: page._id,
+      author_name: page.name,
+    };
+    if (req.files) {
       const { data, mimetype } = req.files.file;
-      post = new PostModel({
+      post = {
+        ...post,
         image: { data, contentType: mimetype },
         hasImage: true,
-        description,
-        belongsTo: "page",
-        pageId: _id,
-      });
+      };
     }
+    post = new PostModel(post);
     await post.save();
     post = await PostModel.findById({ _id: post._id })
       .select("-image")
-      .populate("pageId", "_id name page_admin_id");
+      .populate("author_id", "_id page_admin_id");
     res.send({
       ...post._doc,
       comments: post.comments.length,
@@ -183,63 +148,32 @@ router.post(
     });
   })
 );
-// delete Request for Page Post
 
-router.delete(
-  "/:page_id/post/:post_id",
-  auth,
-  asyncMiddleware(async (req, res) => {
-    const { page_id, post_id } = req.params;
-    const { profile: profile_id } = req.user;
-    const Page = await PageModel.findById({ _id: page_id });
-    if (!Page) return res.sendStatus(404);
-    if (Page.page_admin_id != profile_id) return res.sendStatus(400);
-    let Post = await PostModel.findOneAndDelete({
-      _id: post_id,
-      pageId: Page._id,
-      belongsTo: "page",
-    });
-    res.status(200).send(Post._id);
-  })
-);
-
-// A Route for getting all Pages that are liked by our user
+// A Route for getting  Pages based on type [all,managed,liked]
 router.get(
-  "/liked",
+  "/",
   auth,
   asyncMiddleware(async (req, res) => {
     const { profile: profile_id } = req.user;
-    const pages = await PageModel.find({ likes: { _id: profile_id } }).select(
-      "_id name description"
-    );
-    res.status(200).send(pages);
-  })
-);
+    const { pageNumber, type } = req.query;
 
-// A route for getting all Pages where these are not managed by our user and not either liked
-
-router.get(
-  "/all",
-  auth,
-  asyncMiddleware(async (req, res) => {
-    const { profile: profile_id } = req.user;
-    let pages = await PageModel.find({
-      page_admin_id: { $ne: profile_id },
-      likes: { $nin: [{ _id: profile_id }] },
-    }).select("_id name description");
-    res.send(pages);
-  })
-);
-
-// A route for getting all Pages that are managed  by our  user
-router.get(
-  "/my",
-  auth,
-  asyncMiddleware(async (req, res) => {
-    const { profile: profile_id } = req.user;
-    let pages = await PageModel.find({
-      page_admin_id: profile_id,
-    }).select("_id name description");
+    let query = {};
+    if (type === "all") {
+      query = {
+        page_admin_id: { $ne: profile_id },
+        "likes._id": { $ne: profile_id },
+      };
+    } else if (type === "managed") {
+      query = {
+        page_admin_id: profile_id,
+      };
+    } else if (type === "liked") {
+      query = { "likes._id": profile_id };
+    }
+    const pages = await PageModel.find(query)
+      .select("_id name description page_admin_id")
+      .limit(10)
+      .skip((parseInt(pageNumber) - 1) * 10);
     res.status(200).send(pages);
   })
 );
@@ -263,6 +197,7 @@ router.get(
   asyncMiddleware(async (req, res) => {
     const { _id } = req.params;
     const page = await PageModel.findById({ _id }).select("-cover");
+    if (!page) return res.status(404).send("Page not found");
     res.send(page);
   })
 );

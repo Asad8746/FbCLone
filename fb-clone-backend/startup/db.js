@@ -3,12 +3,10 @@ const config = require("config");
 const winston = require("winston");
 
 module.exports = function () {
-  const dbUri = config.get("mongoUri");
-  console.log(dbUri);
   mongoose
-    .connect(config.get("mongoUri"))
+    .connect(config.get("mongoUri"), { useNewUrlParser: true })
     .then(() => {
-      console.log(`Connected to ${dbUri}`);
+      console.log(`Connected to Db`);
       winston.info("Connected to Database");
     })
     .catch((err) => {

@@ -1,4 +1,5 @@
 {
   "mongoUri": "mongoUri",
-  "secretKey": "secretKey"
+  "secretKey": "secretKey",
+  "clientUrl": "clientUrl"
 }

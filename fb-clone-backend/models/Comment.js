@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const commentSchema = new mongoose.Schema({
-  profile_id: {
+  author: {
     type: mongoose.Types.ObjectId,
     ref: "Profile",
     requried: true,
@@ -11,10 +11,15 @@ const commentSchema = new mongoose.Schema({
     required: true,
     minlength: 5,
   },
+  post_id: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+    ref: "Post",
+  },
   date: {
     type: Date,
     default: Date.now(),
   },
 });
 
-module.exports = commentSchema;
+module.exports = mongoose.model("Comment", commentSchema);

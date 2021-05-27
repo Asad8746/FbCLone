@@ -1,4 +1,5 @@
 {
   "mongoUri": "mongodb://localhost/Fbclone",
-  "secretKey": "private-key"
+  "secretKey": "1234",
+  "clientUrl": "http://localhost:3000"
 }

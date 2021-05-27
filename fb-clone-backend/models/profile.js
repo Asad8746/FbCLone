@@ -1,11 +1,7 @@
 const mongoose = require("mongoose");
-const { postSchema } = require("./PostModel");
-const BlockedSchema = require("./BlockedSchema");
 const FollowerSchema = require("./Followers");
 const FollowingSchema = require("./Following");
 const Profile_Dp_Schema = require("./profile_dp");
-
-const joi = require("joi");
 
 let ProfileSchema = new mongoose.Schema({
   f_name: {
@@ -49,14 +45,25 @@ let ProfileSchema = new mongoose.Schema({
     default: [],
   },
   blocked_users: {
-    type: [BlockedSchema],
+    type: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Profile",
+        required: true,
+      },
+    ],
     default: [],
   },
   blocked_by: {
-    type: [BlockedSchema],
+    type: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Profile",
+        required: true,
+      },
+    ],
     default: [],
   },
-
   about: {
     type: String,
     default: "",
@@ -64,14 +71,5 @@ let ProfileSchema = new mongoose.Schema({
 });
 
 let ProfileModel = mongoose.model("Profile", ProfileSchema);
-
-// const validateProfile = (body) => {
-//     let schema = {
-//         name: joi.string().required().min(3).max(255),
-//         surname:joi.string().required().min(3).max(255),
-//         about : joi.string().required().min(3).max(255)
-//     }
-//     return joi.validate(body,schema)
-// }
 
 module.exports = ProfileModel;

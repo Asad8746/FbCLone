@@ -1,4 +1,6 @@
 {
+  "name": "Fb-Clone",
   "mongoUri": "",
-  "secretKey": ""
+  "secretKey": "",
+  "clientUrl": "http://localhost:3000"
 }

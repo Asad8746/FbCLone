@@ -4,9 +4,7 @@ const auth = require("../Middleware/auth");
 const groupAdminMiddleware = require("../Middleware/groupAdmin");
 const { PostModel, validatePost } = require("../models/PostModel");
 const asyncMiddleware = require("../Middleware/asyncMiddleware");
-
 const ProfileModel = require("../models/profile");
-const { profile } = require("winston");
 
 const router = express.Router();
 
@@ -16,75 +14,54 @@ router.get(
   asyncMiddleware(async (req, res) => {
     const { _id } = req.params;
     const { profile: profile_id } = req.user;
-    const { members } = await GroupModel.findById({ _id }).select("members");
-    const check = members.findIndex((item) => {
-      return item._id == profile_id;
-    });
-    if (check !== -1) return res.status(200).send(true);
-    return res.status(200).send(false);
-  })
-);
-router.get(
-  "/privacy/:_id",
-  auth,
-  asyncMiddleware(async (req, res) => {
-    const { _id } = req.params;
-    const { profile: profile_id } = req.user;
-    const { members } = await GroupModel.findById({ _id }).select("members");
-    const check = members.findIndex((item) => {
-      return item._id == profile_id;
-    });
-    if (check !== -1) return res.status(200).send(true);
+    const check = await GroupModel.findOne({
+      _id,
+      "members._id": profile_id,
+    }).select("_id");
+    if (check) return res.status(200).send(true);
     return res.status(200).send(false);
   })
 );
 
 router.get(
-  "/all",
+  "/",
   auth,
   asyncMiddleware(async (req, res) => {
     const { profile: profile_id } = req.user;
-    const groups = await GroupModel.find({
-      group_admin_id: { $ne: profile_id },
-      members: { $nin: [{ _id: profile_id }] },
-    }).select("-cover -members -requests -posts");
-
+    const { pageNumber, type } = req.query;
+    let query = {};
+    if (type === "all") {
+      query = {
+        group_admin_id: { $ne: profile_id },
+        "members._id": { $ne: profile_id },
+      };
+    }
+    if (type === "joined") {
+      query = {
+        "members._id": profile_id,
+        group_admin_id: { $ne: profile_id },
+      };
+    } else if (type === "managed") {
+      query = {
+        group_admin_id: profile_id,
+      };
+    }
+    const groups = await GroupModel.find(query)
+      .select("-cover -members -requests -posts")
+      .limit(10)
+      .skip((parseInt(pageNumber) - 1) * 10);
     res.send(groups);
   })
 );
 
-router.get(
-  "/joined",
-  auth,
-  asyncMiddleware(async (req, res) => {
-    const { profile: profile_id } = req.user;
-    const groups = await GroupModel.find({
-      members: { _id: profile_id },
-    }).select("-cover -members -requests -posts");
-    res.send(groups);
-  })
-);
-
-router.get(
-  "/managed",
-  auth,
-  asyncMiddleware(async (req, res) => {
-    const { profile: profile_id } = req.user;
-    const groups = await GroupModel.find({
-      group_admin_id: profile_id,
-    }).select("_id name description");
-    res.send(groups);
-  })
-);
 router.get(
   "/:id",
   auth,
   asyncMiddleware(async (req, res) => {
     const { id } = req.params;
-    const group = await GroupModel.findById({ _id: id })
+    const group = await GroupModel.findById(id)
       .select("-cover -posts")
-      .populate("group_admin_id", "_id f_name l_name");
-    console.log(group);
+      .populate("group_admin_id", "_id f_name l_name", "Profile");
     res.status(200).send({
       ...group._doc,
       members: group.members.length,
@@ -98,6 +75,7 @@ router.get(
   auth,
   asyncMiddleware(async (req, res) => {
     const { group_id } = req.params;
+    const { send } = req.notification;
     const { profile: profile_id } = req.user;
     const group = await GroupModel.findById({
       _id: group_id,
@@ -115,12 +93,14 @@ router.put(
   [auth, groupAdminMiddleware],
   asyncMiddleware(async (req, res) => {
     const group = req.group;
+    const { send } = req.notification;
+    const { _id, f_name, l_name } = req.group.group_admin_id;
     const { member_id } = req.params;
     let profile = await ProfileModel.findById({ _id: member_id }).select(
       "_id groups f_name l_name"
     );
     if (!profile) return res.status(404).send("User not Found");
-    if (group.group_admin_id == member_id) {
+    if (_id == member_id) {
       return res
         .status(400)
         .send("You are already a group member as group admin");
@@ -128,7 +108,9 @@ router.put(
     const checkIsMember = group.members.findIndex((item) => {
       return item._id == member_id;
     });
-    if (checkIsMember !== -1) return res.status(400).send("Already Member");
+    if (checkIsMember !== -1) {
+      return res.status(400).send("Already Member");
+    }
     group.members.push({
       _id: member_id,
       name: `${profile.f_name} ${profile.l_name}`,
@@ -138,6 +120,12 @@ router.put(
     });
     await group.save();
     await profile.save();
+    await send({
+      notification: `${f_name} ${l_name} Accepted  your Request for ${group.name}`,
+      noti_from_id: _id,
+      link: "http://something.com",
+      profile_id: profile._id,
+    });
     res.send(group.members);
   })
 );
@@ -154,6 +142,7 @@ router.get(
     if (group.group_admin_id != profile_id) {
       return res.sendStatus(400);
     }
+
     res.send(group);
   })
 );
@@ -169,7 +158,6 @@ router.get(
     if (group.group_admin_id != profile_id) {
       return res.sendStatus(400);
     }
-    console.log(group);
     res.send(group);
   })
 );
@@ -202,6 +190,7 @@ router.put(
   asyncMiddleware(async (req, res) => {
     const { group_id } = req.params;
     const { profile: profile_id } = req.user;
+    const { send } = req.notification;
     const profile = await ProfileModel.findById({ _id: profile_id }).select(
       "_id f_name l_name"
     );
@@ -226,7 +215,13 @@ router.put(
       name: `${profile.f_name} ${profile.l_name}`,
     });
     await group.save();
-    res.send(group.requests);
+    await send({
+      notification: `${profile.f_name} ${profile.l_name} Requested to join ${group.name}`,
+      noti_from_id: profile._id,
+      link: "http://something.com",
+      profile_id: group.group_admin_id,
+    });
+    res.sendStatus(200);
   })
 );
 
@@ -266,7 +261,7 @@ router.put(
   asyncMiddleware(async (req, res) => {
     const { group_id } = req.params;
     const { profile: profile_id } = req.user;
-    const Group = await GroupModel.findByIdAndUpdate(
+    await GroupModel.findByIdAndUpdate(
       {
         _id: group_id,
       },
@@ -276,7 +271,7 @@ router.put(
         },
       }
     );
-    res.send(200);
+    res.sendStatus(200);
   })
 );
 
@@ -297,7 +292,7 @@ router.post(
     let Group = new GroupModel({
       name,
       description,
-      group_admin_id: profile_id,
+      group_admin_id: userprofile._id,
       group_privacy,
     });
     if (req.files) {
@@ -337,70 +332,42 @@ router.post(
     const { profile: profile_id } = req.user;
     if (error) return res.status(400).send(error.details[0].message);
     const { group_id } = req.params;
-    const group = await GroupModel.findById({ _id: group_id }).select({
+    const group = await GroupModel.findById(group_id).select({
       _id: 1,
-      posts: 1,
     });
-    if (!group) return res.sendStatus(404);
+    const profile = await ProfileModel.findById(profile_id).select(
+      "_id f_name l_name"
+    );
+    if (!group || !profile) return res.sendStatus(404);
     const { description } = req.body;
-    let post;
-    if (!req.files) {
-      post = new PostModel({
-        groupId: group_id,
-        description,
-        belongsTo: "group",
-        author_id: profile_id,
-      });
-    } else {
+    let post = {
+      groupId: group_id,
+      description,
+      belongsTo: "group",
+      author_id: profile_id,
+      author_name: `${profile.f_name} ${profile.l_name}`,
+    };
+    if (req.files) {
       const { data, mimetype } = req.files.file;
-      post = new PostModel({
-        groupId: group_id,
+      post = {
+        ...post,
         image: { data, contentType: mimetype },
         hasImage: true,
-        description,
-        belongsTo: "group",
-        author_id: profile_id,
-      });
+      };
     }
-    group.posts.push({ _id: post._id });
+    post = new PostModel(post);
     await post.save();
-    await group.save();
+
     post = await PostModel.findById({ _id: post._id })
       .select("-image")
-      .populate("groupId", "_id name")
-      .populate("author_id", "_id f_name l_name");
+      .populate("author_id", "_id f_name l_name")
+      .populate("groupId", "_id name");
 
     res.status(200).send({
       ...post._doc,
       likes: post.likes.length,
       comments: post.comments.length,
     });
-  })
-);
-
-router.get(
-  "/:group_id/posts",
-  auth,
-  asyncMiddleware(async (req, res) => {
-    const { group_id } = req.params;
-    const group = await GroupModel.findById({ _id: group_id }).select("_id");
-    if (!group) return res.sendStatus(404);
-    let posts = await PostModel.find({
-      belongsTo: "group",
-      groupId: group._id,
-    })
-      .select("-image")
-      .populate("groupId", "_id name group_admin_id")
-      .populate("author_id", "_id f_name l_name")
-      .sort({ date: -1 });
-    posts = posts.map((item) => {
-      return {
-        ...item._doc,
-        comments: item.comments.length,
-        likes: item.likes.length,
-      };
-    });
-    res.status(200).send(posts);
   })
 );
 
@@ -437,15 +404,5 @@ router.patch(
     res.sendStatus(200);
   })
 );
-
-// router.delete(
-//   "/:group_id",
-//   [auth, groupAdminMiddleware],
-//   asyncMiddleware(async (req, res) => {
-//     const { _id } = req.group;
-//     await GroupModel.findByIdAndDelete({ _id });
-//     res.sendStatus(200);
-//   })
-// );
 
 module.exports = router;

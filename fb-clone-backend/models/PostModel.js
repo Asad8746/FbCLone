@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const joi = require("joi");
 const likeSchema = require("./Likes");
-const commentSchema = require("./Comment");
 
 const postSchema = new mongoose.Schema({
   description: {
@@ -11,16 +10,16 @@ const postSchema = new mongoose.Schema({
   },
   belongsTo: {
     type: String,
-    enum: ["page", "group", ""],
+    enum: ["page", "group", "profile"],
     default: "",
   },
-  pageId: {
-    type: mongoose.Types.ObjectId,
-    required: function () {
-      return this.belongsTo === "page";
-    },
-    ref: "Page",
-  },
+  // pageId: {
+  //   type: mongoose.Types.ObjectId,
+  //   required: function () {
+  //     return this.belongsTo === "page";
+  //   },
+  //   ref: "Page",
+  // },
   groupId: {
     type: mongoose.Types.ObjectId,
     required: function () {
@@ -33,7 +32,19 @@ const postSchema = new mongoose.Schema({
     required: function () {
       return this.belongsTo === "" || this.belongsTo === "group";
     },
-    ref: "Profile",
+    ref: function () {
+      if (this.belongsTo === "page") {
+        return "Page";
+      } else {
+        return "Profile";
+      }
+    },
+  },
+  author_name: {
+    type: String,
+    required: true,
+    minlength: 3,
+    maxlength: 255,
   },
   image: {
     data: Buffer,
@@ -48,7 +59,12 @@ const postSchema = new mongoose.Schema({
     default: [],
   },
   comments: {
-    type: [commentSchema],
+    type: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Comment",
+      },
+    ],
     default: [],
   },
   date: {

@@ -5,7 +5,7 @@ const confirmPasswordMiddle = require("../Middleware/confirmPassword");
 const { UserModel } = require("../models/user");
 const { PostModel } = require("../models/PostModel");
 const PageModel = require("../models/PageModel");
-const GroupModel = require("../models/GroupModel");
+const { GroupModel } = require("../models/GroupModel");
 const asyncMiddleware = require("../Middleware/asyncMiddleware");
 const router = express.Router();
 
@@ -25,10 +25,13 @@ router.get(
   "/:_id/followers",
   auth,
   asyncMiddleware(async (req, res) => {
+    const { pageNumber, pageSize } = req.query;
     const { _id } = req.params;
-    const { followers } = await ProfileModel.findById({ _id }).select(
-      "followers"
-    );
+    const { followers } = await ProfileModel.findById({ _id })
+      .select("followers")
+      // .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize);
+
     res.status(200).send(followers);
   })
 );
@@ -44,7 +47,61 @@ router.get(
     res.status(200).send(following);
   })
 );
+router.get(
+  "/checkfollower/:_id",
+  auth,
+  asyncMiddleware(async (req, res) => {
+    const { profile: profile_id } = req.user;
+    const { _id } = req.params;
 
+    const profile = await ProfileModel.findOne({
+      _id: profile_id,
+      "following._id": _id,
+    }).select("_id");
+    if (profile) return res.status(200).send(true);
+    return res.status(200).send(false);
+  })
+);
+
+router.put(
+  "/unfollow/:id",
+  auth,
+  asyncMiddleware(async (req, res) => {
+    const { profile: profile_id } = req.user;
+    let toBeFollowed = await ProfileModel.findById({ _id: req.params.id });
+    if (!toBeFollowed) return res.status(400).send("Bad Request");
+    const updatedProfile = await ProfileModel.findByIdAndUpdate(
+      profile_id,
+      {
+        $pull: {
+          following: {
+            _id: req.params.id,
+            followed_name: `${toBeFollowed.f_name} ${toBeFollowed.l_name}`,
+          },
+        },
+      },
+      { new: true }
+    );
+    toBeFollowed = await ProfileModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $pull: {
+          followers: {
+            _id: profile_id,
+            follower_name: `${updatedProfile.f_name} ${updatedProfile.l_name}`,
+          },
+        },
+      },
+      { new: true }
+    ).select({ following: 1, followers: 1 });
+    await updatedProfile.save();
+    await toBeFollowed.save();
+    res.status(200).send({
+      followers: toBeFollowed.followers.length,
+      following: toBeFollowed.following.length,
+    });
+  })
+);
 router.get(
   "/checktoken",
   auth,
@@ -59,37 +116,50 @@ router.get(
     return res.sendStatus(400);
   })
 );
-
-router.get(
-  "/people",
+router.put(
+  "/follow/:id",
   auth,
   asyncMiddleware(async (req, res) => {
-    let { following, blocked_by, blocked_users } = await ProfileModel.findById({
-      _id: req.user.profile,
-    }).select({ following: 1, blocked_users: 1, blocked_by: 1 });
-    const profiles = await ProfileModel.find({
-      $and: [
-        {
-          _id: { $ne: req.user.profile },
-        },
-        {
-          _id: {
-            $nin: following,
+    const { send } = req.notification;
+    const { profile: profile_id } = req.user;
+    let toBeFollowed = await ProfileModel.findById({ _id: req.params.id });
+    if (!toBeFollowed) return res.status(400).send("Bad Request");
+    const userProfile = await ProfileModel.findByIdAndUpdate(
+      profile_id,
+      {
+        $push: {
+          following: {
+            _id: req.params.id,
+            followed_name: `${toBeFollowed.f_name} ${toBeFollowed.l_name}`,
           },
         },
-        {
-          _id: {
-            $nin: blocked_by,
+      },
+      { new: true }
+    );
+    toBeFollowed = await ProfileModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          followers: {
+            _id: profile_id,
+            follower_name: `${userProfile.f_name} ${userProfile.l_name}`,
           },
         },
-        {
-          _id: {
-            $nin: blocked_users,
-          },
-        },
-      ],
-    }).select({ _id: 1, f_name: 1, l_name: 1 });
-    return res.send(profiles);
+      },
+      { new: true }
+    ).select({
+      following: 1,
+      followers: 1,
+    });
+    await userProfile.save();
+    await toBeFollowed.save();
+    await send({
+      notification: `${userProfile.f_name} ${userProfile.l_name} Started Following you`,
+      noti_from_id: userProfile._id,
+      link: "http://something.com",
+      profile_id: toBeFollowed._id,
+    });
+    res.sendStatus(200);
   })
 );
 
@@ -97,7 +167,8 @@ router.get(
   "/:id",
   auth,
   asyncMiddleware(async (req, res) => {
-    let profile = await ProfileModel.findById({ _id: req.params.id }).select({
+    const { id } = req.params;
+    let profile = await ProfileModel.findById(id).select({
       _id: 1,
       f_name: 1,
       l_name: 1,
@@ -108,7 +179,8 @@ router.get(
       followers: 1,
       about: 1,
     });
-    if (!profile) return res.sendStatus(400);
+    if (!profile)
+      return res.status(404).send({ message: `Oops User  not found` });
     profile = {
       ...profile._doc,
       following: profile.following.length,
@@ -209,6 +281,7 @@ router.post(
     await UserModel.findByIdAndRemove({ _id: id });
     await PostModel.findOneAndRemove({ author_id: profile_id });
     await PageModel.findOneAndRemove({ page_admin_id: profile_id });
+
     await GroupModel.findOneAndRemove({ group_admin_id: profile_id });
     res.sendStatus(200);
   })

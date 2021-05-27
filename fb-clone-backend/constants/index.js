@@ -1,0 +1,3 @@
+module.exports = {
+  Notification: "NOTIFICATION",
+};

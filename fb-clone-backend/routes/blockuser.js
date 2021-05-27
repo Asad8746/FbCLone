@@ -15,7 +15,7 @@ router.get(
       _id: profile_id,
     })
       .select("blocked_users")
-      .populate("blocked_users._id", "_id f_name l_name");
+      .populate("blocked_users", "_id f_name l_name", "Profile");
     res.status(200).send(blocked_users);
   })
 );
@@ -26,33 +26,31 @@ router.get(
   asyncMiddleware(async (req, res) => {
     const { profile: profile_id } = req.user;
     const { id } = req.params;
-    const { blocked_users, blocked_by } = await ProfileModel.findById({
+    const profile = await ProfileModel.findOne({
       _id: profile_id,
+      $or: [{ blocked_users: id }, { blocked_by: id }],
     })
       .select({
         blocked_users: 1,
         blocked_by: 1,
       })
-      .populate("blocked_users._id", "_id f_name l_name")
-      .populate("blocked_by._id", "_id f_name l_name");
-    let check = blocked_users.find((item) => {
-      return item._id._id == id;
-    });
-    if (check)
-      return res
-        .status(400)
-        .send({ userIsBlocked: true, message: "You Blocked this user" });
-    check = blocked_by.find((item) => {
-      return item._id._id == id;
-    });
-    if (check) {
-      const { f_name, l_name } = check._id;
-      return res.status(400).send({
-        blockedByUser: true,
-        message: `you were blocked by ${f_name} ${l_name}`,
-      });
+      .populate("blocked_users", "_id f_name l_name")
+      .populate("blocked_by", "_id f_name l_name");
+    let blocked = {
+      isBlocked: false,
+      message: "",
+    };
+    if (profile && profile.blocked_users.length === 1) {
+      let { f_name, l_name } = profile.blocked_users[0];
+      blocked = { isBlocked: true, message: `You blocked ${f_name} ${l_name}` };
+    } else if (profile && profile.blocked_by.length === 1) {
+      let { f_name, l_name } = profile.blocked_by[0];
+      blocked = {
+        isBlocked: true,
+        message: `You were blocked by ${f_name} ${l_name}`,
+      };
     }
-    res.sendStatus(200);
+    res.status(200).send(blocked);
   })
 );
 
@@ -62,26 +60,23 @@ router.put(
   asyncMiddleware(async (req, res) => {
     const { _id } = req.params;
     const { profile: profile_id } = req.user;
-    const { blocked_users, f_name, l_name } = await ProfileModel.findById({
-      _id: profile_id,
-    }).select({ blocked_users: 1, f_name: 1, l_name: 1 });
-    const checkBlocked = blocked_users.findIndex((item) => {
-      return item._id == _id;
-    });
     const to_be_blocked_user = await ProfileModel.findById({ _id });
     if (!to_be_blocked_user) return res.sendStatus(404);
-    if (checkBlocked !== -1) {
-      return res.status(400).send("User Already Blocked");
+    const profile = await ProfileModel.findOne({
+      _id: profile_id,
+    }).select({ blocked_users: 1, blocked_by: 1, f_name: 1, l_name: 1 });
+    const checkBlocked = profile.blocked_users.includes(_id);
+    if (checkBlocked) {
+      return res.sendStatus(400);
     }
+
     await ProfileModel.findByIdAndUpdate(
       {
         _id: profile_id,
       },
       {
         $push: {
-          blocked_users: {
-            _id,
-          },
+          blocked_users: _id,
         },
         $pull: {
           followers: {
@@ -103,18 +98,16 @@ router.put(
       },
       {
         $push: {
-          blocked_by: {
-            _id: profile_id,
-          },
+          blocked_by: profile_id,
         },
         $pull: {
           followers: {
             _id: profile_id,
-            follower_name: `${f_name} ${l_name}`,
+            follower_name: `${profile.f_name} ${profile.l_name}`,
           },
           following: {
             _id: profile_id,
-            followed_name: `${f_name} ${l_name}`,
+            followed_name: `${profile.f_name} ${profile.l_name}`,
           },
         },
       }
