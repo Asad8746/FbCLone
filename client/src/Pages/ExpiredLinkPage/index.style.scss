@@ -1,0 +1,24 @@
+@import "../../sass/index.scss";
+.expired {
+  background-color: $white-color;
+  //   width: 40%;
+  @include centerContainer;
+  text-align: center;
+  padding: 4rem;
+  &__message {
+    color: $error-color;
+    font-size: 2rem;
+    text-transform: capitalize;
+    margin-bottom: 3rem;
+  }
+  &__btn {
+    color: $primary-color;
+    text-transform: capitalize;
+    font-size: 1.7rem;
+    text-align: center;
+
+    padding-bottom: 5px;
+
+    border-bottom: 1px solid $primary-color;
+  }
+}

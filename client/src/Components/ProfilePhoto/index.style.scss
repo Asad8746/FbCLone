@@ -1,0 +1,66 @@
+@import "../../sass/index.scss";
+.profile-pic {
+  height: 20rem;
+  width: 20rem;
+  border-radius: 50%;
+  position: relative;
+  margin: 0 auto;
+  overflow: hidden;
+
+  @include respond(phone) {
+    height: 12rem;
+    width: 12rem;
+  }
+  &__image {
+    width: 100%;
+    height: 100%;
+  }
+  &__label {
+    font-size: 1rem;
+  }
+  &__upload-btn {
+    position: absolute;
+    bottom: 0px;
+    z-index: 1;
+    width: 100%;
+    height: 50%;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: none;
+    color: white;
+    display: none;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-size: 1.4rem;
+    overflow: hidden;
+    @include respond(phone) {
+      display: block;
+      letter-spacing: 1px;
+      font-size: 1.2rem;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    #icon {
+      color: #fff;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+  }
+  &:hover &__upload-btn {
+    display: block;
+    animation: goToDark 0.8s ease;
+  }
+  &:hover &__icon-container {
+    display: block;
+    animation: moveFromBottom 0.5s ease 0.2s both;
+  }
+}
+
+@keyframes moveFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

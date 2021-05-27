@@ -1,0 +1,21 @@
+@import "../../sass/index";
+
+.signup {
+  &__btn {
+    background-color: $primary-color;
+    letter-spacing: 2px;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    z-index: 2;
+    width: 15rem;
+    text-transform: uppercase;
+    &::after {
+      background-color: $primary-color;
+    }
+    &:hover::after {
+      transform: scaleX(1.4) scaleY(1.6);
+      opacity: 0;
+    }
+  }
+}

@@ -1,40 +1,36 @@
-import Api from "../Api/localhost";
-import { getToken } from "../utils/tokenUtils";
+import Api from "../Api";
 import history from "../history";
+import { paginationTypes, groupTypes, imageTypes } from "../Reducers/constants";
+import { transformGroup } from "../utils/transform";
 
-const getAllGroups = (url) => {
-  return async (dispatch) => {
+export const getAllGroups = (type = "", pageNumber = 1) => {
+  return async (dispatch, getState) => {
     try {
-      const response = await Api.get(`/groups/${url}`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      dispatch({ type: "GET_GROUPS", payload: response.data });
+      let actionType = groupTypes.getGroups;
+      const response = await Api.get(
+        `/groups?type=${type}&pageNumber=${pageNumber}`
+      );
+      if (response.data.length === 0) {
+        dispatch({ type: paginationTypes.hasMore, payload: false });
+        dispatch({ type: groupTypes.setLoading, payload: false });
+        return;
+      }
+      if (getState().group.groups.length > 0) {
+        actionType = groupTypes.getMoreGroups;
+      }
+
+      dispatch({ type: actionType, payload: response.data });
     } catch (err) {
       console.log(err.message);
+      dispatch({ type: groupTypes.setLoading, payload: false });
     }
   };
 };
-const getRequests = (id) => {
+export const getRequests = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.get(`/groups/requests/${id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      dispatch({ type: "UPDATE_REQUESTS", payload: response.data });
-    } catch (err) {
-      console.log(err.message);
-      history.push("/expired");
-    }
-  };
-};
-
-const getMembers = (id) => {
-  return async (dispatch) => {
-    try {
-      const response = await Api.get(`/groups/members/${id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      dispatch({ type: "UPDATE_MEMBERS", payload: response.data });
+      const response = await Api.get(`/groups/requests/${id}`);
+      dispatch({ type: groupTypes.updateRequest, payload: response.data });
     } catch (err) {
       console.log(err.message);
       history.push("/expired");
@@ -42,7 +38,19 @@ const getMembers = (id) => {
   };
 };
 
-const createGroup = (formValues) => {
+export const getMembers = (id) => {
+  return async (dispatch) => {
+    try {
+      const response = await Api.get(`/groups/members/${id}`);
+      dispatch({ type: groupTypes.updateMembers, payload: response.data });
+    } catch (err) {
+      console.log(err.message);
+      history.push("/expired");
+    }
+  };
+};
+
+export const createGroup = (formValues) => {
   return async (dispatch, getState) => {
     try {
       let formData = new FormData();
@@ -53,11 +61,9 @@ const createGroup = (formValues) => {
       if (getState().image) {
         formData.append("file", getState().image);
       }
-      const response = await Api.post("/groups/", formData, {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.post("/groups/", formData);
       if (response.status === 201) {
-        dispatch({ type: "SET_IMAGE", payload: null });
+        dispatch({ type: imageTypes.setImage, payload: null });
         return history.push("/groups");
       }
     } catch (err) {
@@ -66,141 +72,94 @@ const createGroup = (formValues) => {
   };
 };
 
-const getGroup = (id) => {
-  return async (dispatch) => {
+export const getGroup = (id) => {
+  return async (dispatch, getState) => {
     try {
-      const response = await Api.get(`/groups/${id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.get(`/groups/${id}`);
       if (response.status === 200) {
-        dispatch({ type: "GET_GROUP", payload: response.data });
+        const { _id: admin_id } = response.data.group_admin_id;
+        const { id: auth_id } = getState().Authentication;
+        dispatch({ type: groupTypes.setAdmin, payload: admin_id === auth_id });
+        dispatch({
+          type: groupTypes.getGroup,
+          payload: transformGroup(response.data),
+        });
+        return;
       }
     } catch (err) {
-      console.log(err.response.data);
+      if (err.response) {
+        console.log(err.response.data);
+      } else {
+        console.log(err.message);
+      }
     }
   };
 };
 
-const checkPrivacy = (id) => {
-  return async (dispatch) => {
-    try {
-      const response = await Api.get(`/groups/privacy/${id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      dispatch({ type: "SET_PRIVACY", payload: response.data });
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
+export const resetGroups = () => {
+  return { type: groupTypes.resetGroups };
 };
-const checkIsMember = (id) => {
+
+export const checkIsMember = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.get(`/groups/check/${id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      dispatch({ type: "CHECK_MEMBER", payload: response.data });
+      const response = await Api.get(`/groups/check/${id}`);
+      dispatch({ type: groupTypes.checkMember, payload: response.data });
     } catch (err) {
       console.log(err.message);
     }
   };
 };
 
-const requestGroup = async (id, setState) => {
+export const requestGroup = async (id, setState) => {
   try {
-    await Api.put(
-      `/groups/request/${id}`,
-      {},
-      { headers: { "x-auth-token": getToken() } }
-    );
+    await Api.put(`/groups/request/${id}`);
     setState(true);
   } catch (err) {
     setState(false);
     console.log(err.message);
   }
 };
-const cancelRequest = async (id, setState) => {
+export const cancelRequest = async (id, setState) => {
   try {
-    await Api.put(
-      `/groups/cancelRequest/${id}`,
-      {},
-      {
-        headers: { "x-auth-token": getToken() },
-      }
-    );
+    await Api.put(`/groups/cancelRequest/${id}`);
     setState(false);
   } catch (err) {
     console.log(err.message);
   }
 };
 
-const addMember = async (member_id, group_id) => {
+export const addMember = async (member_id, group_id) => {
   try {
-    await Api.put(
-      `/groups//add/${group_id}/member/${member_id}`,
-      {},
-      {
-        headers: { "x-auth-token": getToken() },
-      }
-    );
+    await Api.put(`/groups//add/${group_id}/member/${member_id}`);
     history.push(`/groups/${group_id}`);
   } catch (err) {
     console.log(err.message);
   }
 };
-const checkIsRequested = async (id, setState) => {
+export const checkIsRequested = async (id, setState) => {
   try {
-    const response = await Api.get(`/groups/check/${id}/request`, {
-      headers: {
-        "x-auth-token": getToken(),
-      },
-    });
+    const response = await Api.get(`/groups/check/${id}/request`);
     setState(response.data);
   } catch (err) {
     console.log(err.message);
   }
 };
 
-const leaveGroup = async (group_id) => {
+export const leaveGroup = async (group_id) => {
   try {
-    console.log(group_id);
-    await Api.put(
-      `/groups/leave/${group_id}`,
-      {},
-      {
-        headers: { "x-auth-token": getToken() },
-      }
-    );
+    await Api.put(`/groups/leave/${group_id}`);
     history.push(`/groups/`);
   } catch (err) {
     console.log(err.message);
   }
 };
 
-const getPostsForGroup = (group_id) => {
-  return async (dispatch) => {
-    try {
-      const response = await Api.get(`/groups/${group_id}/posts`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      dispatch({ type: "GET_POSTS", payload: response.data });
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-};
-
-const updateGroup = async (id, formValues) => {
+export const updateGroup = async (id, formValues) => {
   try {
-    const response = await Api.patch(
-      `/groups/${id}`,
-      {
-        ...formValues,
-      },
-      {
-        headers: { "x-auth-token": getToken() },
-      }
-    );
+    const response = await Api.patch(`/groups/${id}`, {
+      ...formValues,
+    });
     if (response.status === 200) {
       return history.push(`/groups/${id}`);
     }
@@ -209,12 +168,10 @@ const updateGroup = async (id, formValues) => {
   }
 };
 
-const deleteGroup = (id) => {
+export const deleteGroup = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.delete(`/groups/${id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.delete(`/groups/${id}`);
       if (response.status === 200) {
         history.push("/groups");
         return dispatch({ type: "GET_GROUP", payload: null });
@@ -225,14 +182,10 @@ const deleteGroup = (id) => {
   };
 };
 
-const removeMember = async (group_id, member_id) => {
+export const removeMember = async (group_id, member_id) => {
   try {
     const response = await Api.put(
-      `/groups/remove/${group_id}/member/${member_id}`,
-      {},
-      {
-        headers: { "x-auth-token": getToken() },
-      }
+      `/groups/remove/${group_id}/member/${member_id}`
     );
     if (response.status === 200) {
       history.push(`/groups/${group_id}`);
@@ -242,21 +195,21 @@ const removeMember = async (group_id, member_id) => {
   }
 };
 
-export default {
-  getAllGroups,
-  createGroup,
-  getGroup,
-  checkIsMember,
-  checkPrivacy,
-  requestGroup,
-  addMember,
-  leaveGroup,
-  cancelRequest,
-  checkIsRequested,
-  getPostsForGroup,
-  getRequests,
-  updateGroup,
-  deleteGroup,
-  getMembers,
-  removeMember,
-};
+// export default {
+//   getAllGroups,
+//   createGroup,
+//   getGroup,
+//   checkIsMember,
+//   checkPrivacy,
+//   requestGroup,
+//   addMember,
+//   leaveGroup,
+//   cancelRequest,
+//   checkIsRequested,
+//   getPostsForGroup,
+//   getRequests,
+//   updateGroup,
+//   deleteGroup,
+//   getMembers,
+//   removeMember,
+// };

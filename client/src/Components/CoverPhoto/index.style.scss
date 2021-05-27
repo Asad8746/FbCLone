@@ -1,0 +1,66 @@
+@import "../../sass/index";
+.cover {
+  height: 40rem;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  &__image {
+    width: 100%;
+    height: 100%;
+  }
+  @include respond(phone) {
+    height: 30rem;
+  }
+  &__overlay {
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      transparent,
+      rgba(0, 0, 0, 0.5)
+    );
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+  .cover__upload {
+    position: absolute;
+    top: 2.9rem;
+    left: 2.9rem;
+    height: 4rem;
+    width: 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+    z-index: 2;
+    // @include respond(phone) {
+    //   height: 3rem;
+    //   width: 3rem;
+    // }
+    .action-icon {
+      color: $white-color;
+      font-size: 1.5rem;
+
+      // transform: translateY(-40%);
+    }
+  }
+  &__actions {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 20%;
+    z-index: 999;
+    height: 5rem;
+    margin: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    @include respond(tab-land) {
+      width: 100%;
+      justify-content: center;
+      margin: 0;
+    }
+  }
+}

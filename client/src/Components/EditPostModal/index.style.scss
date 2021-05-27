@@ -1,0 +1,17 @@
+.edit-post {
+  &__label {
+    text-align: center;
+    color: #555;
+    margin: 1rem 0;
+    font-weight: 500;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: block;
+  }
+  &__textarea-container {
+    margin: 0 auto;
+    margin-bottom: 1rem;
+    width: 95%;
+  }
+}

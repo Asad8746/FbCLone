@@ -1,0 +1,60 @@
+@import "../../sass/index";
+.comment-item {
+  width: 100%;
+  display: flex;
+  padding: 1rem;
+  &__delete-btn {
+    font-size: 1.3rem;
+  }
+  &__avatar {
+    margin-top: 1rem;
+    height: 3.5rem;
+    flex: 0 0 3.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+
+    img {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  &__content {
+    display: flex;
+    margin-left: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    background-color: $white-color-1;
+    flex-direction: column;
+    border-radius: 1.5rem;
+    flex: 1;
+    overflow: hidden;
+    .author {
+      color: $font-color;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 0.5rem;
+    }
+  }
+  &__text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    // text-align: justify;
+    // text-transform: ;
+  }
+  &__actions {
+    margin-left: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+    // justify-content: center;
+    // align-items: center;
+    flex: 0 0;
+  }
+  &__date {
+    margin-left: 0.8rem;
+    font-size: 1.3rem;
+  }
+}

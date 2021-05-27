@@ -1,0 +1,25 @@
+@import "../../sass/index";
+.group {
+  width: 70%;
+  margin: 0 auto;
+  position: relative;
+  @include respond(tab-land) {
+    width: 100%;
+  }
+  &__timeline-container {
+    display: flex;
+    align-items: flex-start;
+    @include respond(phone) {
+      display: block;
+    }
+  }
+  &__timeline {
+    width: 70%;
+    @include respond(phone) {
+      width: 100%;
+    }
+  }
+  .page-image {
+    width: 100%;
+  }
+}

@@ -1,0 +1,12 @@
+@import "../../sass/index";
+
+.form__error {
+  margin-left: 1.5rem;
+  padding-top: 1rem;
+  font-size: 1.2rem;
+  color: $error-color;
+  position: absolute;
+  bottom: 0;
+  text-transform: capitalize;
+  letter-spacing: 1px;
+}

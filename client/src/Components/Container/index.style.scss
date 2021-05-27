@@ -1,0 +1,10 @@
+@import "../../sass/index";
+.layout-container {
+  .hidden__container {
+    height: 5.6rem;
+    width: 100%;
+  }
+  @include respond(phone) {
+    margin-bottom: 5.6rem;
+  }
+}

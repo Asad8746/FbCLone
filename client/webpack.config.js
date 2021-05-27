@@ -1,7 +1,4 @@
-module.exports  = {
-    devServer : {
-        watchOptions: {
-            ignored : [`${__dirname}/public/uploads`,`${__dirname}/public`]
-        }
-    }
-}
+module.exports = {
+  test: /.svg$/,
+  use: ["@svgr/webpack", "url-loader"],
+};

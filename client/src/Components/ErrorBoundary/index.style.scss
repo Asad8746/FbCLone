@@ -1,0 +1,25 @@
+@import "../../sass/index";
+.error-boundary {
+  height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  .error-svg {
+    height: 50rem;
+    width: 50rem;
+    @include respond(phone) {
+      height: 25rem;
+      width: 25rem;
+    }
+  }
+  p {
+    color: $font-color;
+    font-size: 4rem;
+    letter-spacing: 3px;
+    @include respond(phone) {
+      font-size: 2rem;
+    }
+  }
+}

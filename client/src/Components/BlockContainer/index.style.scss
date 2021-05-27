@@ -1,0 +1,21 @@
+@import "../../sass/index";
+.block {
+  &__container {
+    background-color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem;
+  }
+  &__message {
+    color: $error-color;
+    font-size: 2rem;
+    text-transform: capitalize;
+    letter-spacing: 1px;
+  }
+}

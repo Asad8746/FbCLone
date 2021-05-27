@@ -1,0 +1,15 @@
+.like {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: "Open Sans";
+  font-weight: 600;
+  font-size: 14px;
+  color: "#a4a4a9";
+  font-weight: 500;
+  .like__icon {
+    color: tomato;
+    font-size: 17px;
+  }
+}

@@ -1,23 +1,35 @@
 import history from "../history";
-import Api from "../Api/localhost";
-import { getToken } from "../utils/tokenUtils";
+import Api from "../Api";
+import { imageTypes, pageTypes, paginationTypes } from "../Reducers/constants";
 
 // A Action creater which will get Pages from server based on url which can be /liked or /my
-const getPages = (url) => {
-  return async (dispatch) => {
+export const getPages = (type, pageNumber = 1) => {
+  return async (dispatch, getState) => {
     try {
-      const response = await Api.get(`/pages/${url}`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      dispatch({ type: "GET_PAGES", payload: { pagesList: response.data } });
+      const response = await Api.get(
+        `/pages?type=${type}&pageNumber=${pageNumber}`
+      );
+      if (response.data.length === 0) {
+        dispatch({ type: paginationTypes.hasMore, payload: false });
+        dispatch({ type: pageTypes.setLoading, payload: false });
+      }
+      if (getState().pages.pagesList.length > 0) {
+        dispatch({
+          type: pageTypes.getMorePages,
+          payload: response.data,
+        });
+        return;
+      }
+      dispatch({ type: pageTypes.getPages, payload: response.data });
     } catch (err) {
-      console.log(err.response.data);
+      console.log(err.message);
+      // console.log(err.response.data);
     }
   };
 };
 
 //Action Create to create a new page
-const createPage = (formValues) => {
+export const createPage = (formValues) => {
   return async (dispatch, getState) => {
     try {
       let formData = new FormData();
@@ -26,11 +38,9 @@ const createPage = (formValues) => {
       if (getState().image) {
         formData.append("file", getState().image);
       }
-      const response = await Api.post("/pages/", formData, {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.post("/pages/", formData);
       if (response.status === 201) {
-        dispatch({ type: "SET_IMAGE", payload: null });
+        dispatch({ type: imageTypes.setImage, payload: null });
         return history.push("/pages");
       }
     } catch (err) {
@@ -41,120 +51,70 @@ const createPage = (formValues) => {
 
 //Action creator to get a page
 
-const getPage = (id) => {
+export const getPage = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.get(`/pages/${id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.get(`/pages/${id}`);
       if (response.status === 200) {
-        dispatch({ type: "GET_PAGE", payload: response.data });
+        dispatch({ type: pageTypes.getPage, payload: response.data });
       }
     } catch (err) {
       console.log(err.response.data);
-    }
-  };
-};
-
-// Action creator to get all posts for a page
-
-const getAllPostForPage = (id) => {
-  return async (dispatch) => {
-    try {
-      const response = await Api.get(`/pages/${id}/posts`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      console.log(response.data);
-      dispatch({ type: "GET_POSTS", payload: response.data });
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
-};
-
-const deletePagePost = (page_id, post_id) => {
-  return async (dispatch) => {
-    console.log(page_id);
-
-    try {
-      const response = await Api.delete(`/pages/${page_id}/post/${post_id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      if (response.status === 200) {
-        console.log(response.data);
-        return dispatch({ type: "DELETE_POST", payload: response.data });
-      }
-    } catch (err) {
-      console.log(err.response.data);
+      dispatch({ type: pageTypes.setLoading, payload: false });
+      history.push("/pages");
     }
   };
 };
 
 // Action creator that will allow user to like a page
-const likePage = (id, setState) => {
+export const likePage = (id, cb) => {
   return async (dispatch) => {
-    console.log(id);
     try {
-      const response = await Api.put(
-        `/pages/like/${id}`,
-        {},
-        { headers: { "x-auth-token": getToken() } }
-      );
-      setState(true);
-
+      const response = await Api.put(`/pages/like/${id}`);
+      cb(true);
       return dispatch({
-        type: "UPDATE_PAGE_LIKES",
+        type: pageTypes.updatePageLikes,
         payload: { likes: response.data },
       });
     } catch (err) {
+      cb(null);
       console.log(err.response.data);
     }
   };
 };
 
-const checkIsLiked = async (id, setState) => {
+export const checkIsLiked = async (id, cb) => {
   try {
-    const response = await Api.get(`/pages/isLiked/${id}`, {
-      headers: { "x-auth-token": getToken() },
-    });
-    if (response.status === 200) {
-      setState(true);
-    }
+    const response = await Api.get(`/pages/isLiked/${id}`);
+    cb(response.data);
   } catch (err) {
-    setState(false);
+    console.log(err.response.data);
   }
 };
 
-const disLikePage = (id, setState) => {
+export const disLikePage = (id, cb) => {
   return async (dispatch) => {
     try {
-      const response = await Api.put(
-        `/pages/dislike/${id}`,
-        {},
-        {
-          headers: { "x-auth-token": getToken() },
-        }
-      );
-      setState(false);
+      const response = await Api.put(`/pages/dislike/${id}`);
+      cb(false);
       return dispatch({
-        type: "UPDATE_PAGE_LIKES",
+        type: pageTypes.updatePageLikes,
         payload: { likes: response.data },
       });
     } catch (err) {
+      cb(null);
       console.log(err.message);
     }
   };
 };
 
-const deletePage = (id) => {
+export const deletePage = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.delete(`/pages/${id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.delete(`/pages/${id}`);
       if (response.status === 200) {
         history.push("/pages");
-        return dispatch({ type: "GET_PAGE", payload: null });
+        return dispatch({ type: pageTypes.getPage, payload: null });
       }
     } catch (err) {
       console.log(err.message);
@@ -162,17 +122,11 @@ const deletePage = (id) => {
   };
 };
 
-const updatePage = async (id, formValues) => {
+export const updatePage = async (id, formValues) => {
   try {
-    const response = await Api.patch(
-      `/pages/${id}`,
-      {
-        ...formValues,
-      },
-      {
-        headers: { "x-auth-token": getToken() },
-      }
-    );
+    const response = await Api.patch(`/pages/${id}`, {
+      ...formValues,
+    });
     if (response.status === 200) {
       return history.push(`/pages/${id}`);
     }
@@ -181,15 +135,19 @@ const updatePage = async (id, formValues) => {
   }
 };
 
-export const fbPagesActions = {
-  getPages,
-  getPage,
-  updatePage,
-  deletePage,
-  disLikePage,
-  checkIsLiked,
-  likePage,
-  deletePagePost,
-  getAllPostForPage,
-  createPage,
+export const resetPages = () => {
+  return { type: pageTypes.reset };
 };
+
+// export const fbPagesActions = {
+//   getPages,
+//   getPage,
+//   updatePage,
+//   deletePage,
+//   disLikePage,
+//   checkIsLiked,
+//   likePage,
+//   deletePagePost,
+//   getAllPostForPage,
+//   createPage,
+// };

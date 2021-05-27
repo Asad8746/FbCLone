@@ -1,0 +1,46 @@
+@import "../../sass/index";
+.people {
+  &__container {
+    background-color: $white-color;
+    width: 70%;
+    margin: 0 auto;
+    margin-top: 1rem;
+    padding: 2rem 1rem;
+    @include respond(tab-land) {
+      width: 100%;
+      padding: 2rem;
+    }
+  }
+  &__empty-container {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: capitalize;
+    font-size: 1.2rem;
+  }
+  .loader__container {
+    padding: 2rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: auto;
+  }
+
+  &__list-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+    @include respond(tab-land) {
+      grid-template-columns: 1fr;
+    }
+  }
+  &__header {
+    padding: 1.5rem 0;
+    font-size: 1.6rem;
+    color: $font-color;
+    letter-spacing: 0.1rem;
+  }
+}

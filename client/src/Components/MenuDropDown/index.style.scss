@@ -1,0 +1,19 @@
+@import "../../sass/index";
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 5.7rem;
+  transform: translateX(-2rem);
+  box-shadow: 0 1rem 4rem rgba($black-color, 0.2);
+  z-index: 600;
+}
+.dropdown-modal {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 500;
+}

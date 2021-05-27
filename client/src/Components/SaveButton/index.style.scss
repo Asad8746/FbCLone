@@ -1,0 +1,9 @@
+@import "../../sass/index";
+.save-btn {
+  background-color: $primary-color;
+  border: none;
+  .icon {
+    color: $white-color;
+    font-size: 1.1rem;
+  }
+}

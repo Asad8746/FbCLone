@@ -1,0 +1,18 @@
+@import "../../sass/index";
+.blocked {
+  &__container {
+    width: 40%;
+    background-color: $white-color;
+    margin: 0 auto;
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 1rem 4rem rgba($black-color, 0.1);
+    @include respond(phone) {
+      width: 100%;
+    }
+  }
+  &__empty {
+    text-align: center;
+    padding: 1rem 0;
+  }
+}

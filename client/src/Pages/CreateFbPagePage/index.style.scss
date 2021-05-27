@@ -1,0 +1,51 @@
+@import "../../sass/index";
+.page {
+  &__container {
+    background-color: $white-color;
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 1rem;
+    padding: 2rem 0;
+    @include respond(tab-port) {
+      width: 100%;
+    }
+  }
+  &__btn {
+    z-index: 10;
+    cursor: pointer;
+    background-color: $white-color;
+    position: relative;
+    border-radius: 0.5rem;
+    letter-spacing: 2px;
+    font-weight: 500;
+    text-transform: capitalize;
+    padding: 1rem 3rem;
+    font-size: 1.3rem;
+    color: $primary-color;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid $primary-color;
+    // border: none;
+    &::after {
+      content: "";
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      // right: 0;
+      z-index: -1;
+      transform: translateY(110%);
+      background-color: $primary-color;
+      transition: all 0.5s ease;
+      border: 3px solid $primary-color;
+      border-radius: 50%;
+    }
+    &:hover {
+      color: white;
+    }
+    &:hover::after {
+      transform: translateY(0) scale(2);
+    }
+  }
+}

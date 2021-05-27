@@ -1,41 +1,45 @@
+import { profileTypes } from "./constants";
+
 const INITIAL_STATE = {
   profile: {},
   followers: null,
   following: null,
+  error: "",
+  loading: true,
 };
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case "GET_PROFILE":
+    case profileTypes.getProfile:
       return { ...state, profile: action.payload };
-    case "GET_PROFILE_BY_ID":
-      return { ...state, profile: action.payload };
-    case "GET_FOLLOWERS":
+    case profileTypes.setLoading:
+      return { ...state, loading: action.payload };
+    case profileTypes.reset:
+      return { ...INITIAL_STATE };
+    case profileTypes.error:
+      return { ...state, error: action.payload };
+    case profileTypes.getFollowers:
       return { ...state, followers: action.payload };
-    case "GET_FOLLOWING":
+    case profileTypes.getFollowing:
       return { ...state, following: action.payload };
-    case "CREATEPOST":
+    case profileTypes.createPost:
       return { ...state, ...action.payload };
-    case "FOLLOW_USER":
+    case profileTypes.followUser:
       return {
         ...state,
         profile: {
           ...state.profile,
-          followers: action.payload.followers,
-          following: action.payload.following,
+          followers: state.profile.followers + 1,
         },
       };
-    case "UNFOLLOW_USER":
+    case profileTypes.unfollow:
       return {
         ...state,
         profile: {
           ...state.profile,
-          followers: action.payload.followers,
-          following: action.payload.following,
+          following: state.profile.following - 1,
         },
       };
-    case "UNLIKE":
-      return { ...state, ...action.payload };
     default:
       return state;
   }

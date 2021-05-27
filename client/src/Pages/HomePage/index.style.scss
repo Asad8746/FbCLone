@@ -1,0 +1,12 @@
+@import "../../sass/index";
+.home {
+  width: 60%;
+  margin: 0 auto;
+  margin-top: 1rem;
+  @include respond(tab-port) {
+    width: 100%;
+  }
+  @include respond(phone) {
+    margin-bottom: 5.6rem;
+  }
+}

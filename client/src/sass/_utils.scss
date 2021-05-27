@@ -1,0 +1,15 @@
+.u-center-text {
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+
+.u-margin-top-medium {
+  margin-top: 4rem;
+  @include respond(tab-port) {
+    margin-top: 2rem;
+  }
+}
+.u-margin-bottom-medium {
+  margin-bottom: 4rem;
+}

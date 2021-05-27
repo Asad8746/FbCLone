@@ -1,0 +1,16 @@
+@import "../../sass/index";
+.block-btn {
+  border: none;
+  padding: 1rem 2rem;
+  transition: all 0.5s ease;
+  background-color: tomato;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.2rem;
+  &:hover {
+    border-radius: 5rem;
+  }
+}

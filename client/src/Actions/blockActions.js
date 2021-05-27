@@ -1,67 +1,64 @@
-import Api from "../Api/localhost";
-import { getToken } from "../utils/tokenUtils";
+import Api from "../Api";
 import history from "../history";
-
-const getAllBlockedUsers = () => {
+import { blockTypes } from "../Reducers/constants";
+export const getAllBlockedUsers = () => {
   return async (dispatch) => {
     try {
-      const response = await Api.get("/block/users", {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.get("/block/users");
       dispatch({
-        type: "BLOCKED_USERS",
+        type: blockTypes.setBlockedUsers,
         payload: response.data,
+      });
+
+      dispatch({
+        type: blockTypes.setLoading,
+        payload: false,
       });
     } catch (err) {
       console.log(err.response.data);
+      dispatch({
+        type: blockTypes.setLoading,
+        payload: false,
+      });
     }
   };
 };
-const checkBlocked = (id) => {
+export const checkBlocked = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.get(`/block/check/${id}`, {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.get(`/block/check/${id}`);
       if (response.status === 200) {
+        const { isBlocked, message } = response.data;
         dispatch({
-          type: "CHECK_IS_BLOCKED",
-          payload: {
-            blockedStatus: false,
-            blockLoader: false,
-          },
+          type: blockTypes.setBlockStatus,
+          payload: isBlocked,
+        });
+
+        dispatch({ type: blockTypes.setMessage, payload: message });
+        dispatch({
+          type: blockTypes.setLoading,
+          payload: false,
         });
       }
     } catch (err) {
       console.log(err.response.data);
       dispatch({
-        type: "CHECK_IS_BLOCKED",
-        payload: {
-          blockedStatus: true,
-          blockLoader: false,
-          ...err.response.data,
-        },
+        type: blockTypes.setLoading,
+        payload: false,
       });
     }
   };
 };
 
-const blockUser = (id) => {
+export const blockUser = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.put(
-        `/block/${id}`,
-        {},
-        { headers: { "x-auth-token": getToken() } }
-      );
+      const response = await Api.put(`/block/${id}`);
       if (response.status === 200) {
         history.push("/");
         return dispatch({
-          type: "CHECK_IS_BLOCKED",
-          payload: {
-            blockedStatus: false,
-            blockLoader: false,
-          },
+          type: blockTypes.setBlockStatus,
+          payload: false,
         });
       }
     } catch (err) {
@@ -70,17 +67,13 @@ const blockUser = (id) => {
   };
 };
 
-const unBlockUser = (id) => {
+export const unBlockUser = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.put(
-        `/unblock/${id}`,
-        {},
-        { headers: { "x-auth-token": getToken() } }
-      );
+      const response = await Api.put(`/unblock/${id}`);
       if (response.status === 200) {
         return dispatch({
-          type: "BLOCKED_USERS",
+          type: blockTypes.setBlockedUsers,
           payload: response.data,
         });
       }
@@ -90,9 +83,9 @@ const unBlockUser = (id) => {
   };
 };
 
-export const blockActions = {
-  checkBlocked,
-  blockUser,
-  getAllBlockedUsers,
-  unBlockUser,
-};
+// export const blockActions = {
+//   checkBlocked,
+//   blockUser,
+//   getAllBlockedUsers,
+//   unBlockUser,
+// };

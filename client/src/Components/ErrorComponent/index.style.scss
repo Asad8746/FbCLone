@@ -1,0 +1,19 @@
+@import "../../sass/index";
+.error__message {
+  width: 90%;
+  margin: 0 auto;
+  padding: 0;
+  line-height: 0;
+  color: $error-color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    display: inline-block;
+  }
+  #error__message-icon {
+    margin-left: 1rem;
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,21 @@
+.block__item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  padding-bottom: 0;
+  &__content {
+    display: flex;
+    align-items: center;
+    .avatar {
+      height: 3rem;
+      width: 3rem;
+      border-radius: 50%;
+    }
+    p {
+      margin-left: 1.3rem;
+      font-size: 1.4rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+  }
+}

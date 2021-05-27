@@ -1,70 +1,81 @@
 import history from "../history";
-import Api from "../Api/localhost";
-import { getToken, setToken, removeToken } from "../utils/tokenUtils";
+import Api from "../Api";
+import { setToken, removeToken } from "../utils/tokenUtils";
+import { AuthTypes, checkTypes } from "../Reducers/constants";
 
-const checkIsUser = (authentication_id, id) => {
+export const checkIsUser = (authentication_id, id) => {
   if (authentication_id === id) {
-    return { type: "CHECK_USER", payload: true };
+    return { type: checkTypes.checkUser, payload: true };
   } else {
-    return { type: "CHECK_USER", payload: false };
+    return { type: checkTypes.checkUser, payload: false };
   }
 };
 
-const checkToken = () => {
+export const checkToken = (cb) => {
   return async (dispatch) => {
     try {
-      const response = await Api.get("/profile/checktoken", {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.get("/profile/checktoken");
       if (response.status === 200) {
         dispatch({
-          type: "CHECK",
+          type: AuthTypes.SET_AUTH,
           payload: {
             isAuthenticated: true,
-            isLoading: false,
+          },
+        });
+        dispatch({
+          type: AuthTypes.SET_USER,
+          payload: {
             id: response.data.id,
             f_name: response.data.f_name,
             l_name: response.data.l_name,
           },
         });
+        dispatch({ type: AuthTypes.setLoading, payload: false });
+        cb();
       }
     } catch (err) {
       removeToken();
       dispatch({
-        type: "CHECK",
-        payload: {
-          isAuthenticated: false,
-          isLoading: false,
-          id: "",
-          f_name: "",
-          l_name: "",
-        },
+        type: AuthTypes.setLoading,
+        payload: false,
       });
     }
   };
 };
 
-const LoginUser = ({ email, password }) => {
+export const LoginUser = ({ email, password }, cb) => {
   return async (dispatch) => {
     try {
       const response = await Api.post("/user/auth", { email, password });
+
       if (response.status === 200) {
-        const { id } = response.data;
+        const { id, f_name, l_name } = response.data;
         setToken(response.headers);
         dispatch({
-          type: "LOGIN_USER",
-          payload: { isAuthenticated: true, id },
+          type: AuthTypes.SET_AUTH,
+          payload: {
+            isAuthenticated: true,
+          },
         });
-        console.log(response.data);
+        dispatch({
+          type: AuthTypes.SET_USER,
+          payload: {
+            id,
+            f_name,
+            l_name,
+          },
+        });
+        cb();
         history.push(`/profile/${id}`);
       }
     } catch (err) {
       dispatch({ type: "SET_ERROR_MESSAGE", payload: err.response.data });
+      cb();
     }
   };
 };
 
-const registerUser = (formValues) => {
+export const registerUser = (formValues, cb) => {
   return async (dispatch) => {
     try {
       const response = await Api.post("/user/register", {
@@ -73,25 +84,42 @@ const registerUser = (formValues) => {
       if (response.status === 200) {
         const { id } = response.data;
         setToken(response.headers);
-        dispatch({ type: "REGISTER", payload: { isAuthenticated: true, id } });
+        dispatch({
+          type: AuthTypes.SET_AUTH,
+          payload: {
+            isAuthenticated: true,
+          },
+        });
+        dispatch({
+          type: AuthTypes.SET_USER,
+          payload: {
+            id: response.data.id,
+            f_name: response.data.f_name,
+            l_name: response.data.l_name,
+          },
+        });
+
+        // dispatch({ type: AuthTypes.setLoading, payload: false });
+        cb();
         history.push(`/profile/${id}`);
       }
     } catch (err) {
       dispatch({ type: "SET_ERROR_MESSAGE", payload: err.response.data });
+      cb();
     }
   };
 };
 
-const logout = () => {
+export const logoutUser = () => {
   removeToken();
   history.push("/");
-  return { type: "LOGOUT", payload: { isAuthenticated: false } };
+  return { type: AuthTypes.SET_AUTH, payload: false };
 };
 
-export const authActions = {
-  LoginUser,
-  logout,
-  registerUser,
-  checkToken,
-  checkIsUser,
-};
+// export const authActions = {
+//   LoginUser,
+//   logout,
+//   registerUser,
+//   checkToken,
+//   checkIsUser,
+// };

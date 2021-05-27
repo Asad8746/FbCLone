@@ -1,29 +1,20 @@
+@import "../../sass/index.scss";
 .posts {
-  margin-top: 20px;
-  #post {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    width: 100%;
-    margin: 5px auto;
-    .post__image {
-      height: 500px;
-      width: 100%;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .header {
-      color: #3b5998;
-    }
-    p {
-      text-align: start;
-      margin: 10px 0;
-    }
-    .date {
-      margin: 30px 17px 10px 0px;
-      text-align: end;
-    }
-    .extra-content {
-      padding: 0 17px;
-    }
+  .end-message {
+    text-align: center;
+    padding: 1.5rem 0;
+    color: $font-color;
+    letter-spacing: 0.2rem;
+    font-size: 1.6rem;
+  }
+  &__empty-container {
+    // height: 3rem;
+    padding: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $white-color;
+    color: $font-color;
+    font-size: 1.6rem;
   }
 }

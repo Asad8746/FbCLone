@@ -1,8 +1,10 @@
-export default (state = false,action) => {
-    switch(action.type) {
-        case "CHECK_USER" :
-            return action.payload;
-        default :
-            return state;
-    }
-}
+import { checkTypes } from "./constants";
+
+export default (state = false, action) => {
+  switch (action.type) {
+    case checkTypes.checkUser:
+      return action.payload;
+    default:
+      return state;
+  }
+};

@@ -1,0 +1,27 @@
+@import "../../sass/index.scss";
+.confirm-password {
+  &__form {
+    width: 80%;
+    margin: 2rem auto;
+    label {
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      width: 100%;
+      text-align: center;
+      text-transform: capitalize;
+      display: inline-block;
+    }
+    input {
+      border: none;
+      padding: 1rem;
+      border: 1px solid $grey-color-border;
+      display: block;
+      width: 100%;
+      border-radius: 5px;
+      &:focus {
+        border: 1px solid $primary-color;
+        outline: 1px solid $primary-color;
+      }
+    }
+  }
+}

@@ -1,42 +1,42 @@
-import { fbPostActions } from "./fbpostsActions";
-import { profileActions } from "./profileActions";
-import { fbPagesActions } from "./fbPagesActions";
-import { peopleActions } from "./peopleActions";
-import { blockActions } from "./blockActions";
-import { authActions } from "./authActions";
-import { commentActions } from "./commentActions";
-import groupActions from "./groupActions";
-const whatToShow = (value) => {
+import Api from "../Api";
+import { imageTypes } from "../Reducers/constants";
+
+export * from "./authActions";
+export * from "./fbPagesActions";
+export * from "./profileActions";
+export * from "./fbPagesActions";
+export * from "./peopleActions";
+export * from "./fbpostsActions";
+export * from "./blockActions";
+export * from "./commentActions";
+export * from "./groupActions";
+export * from "./notification";
+export const whatToShow = (value) => {
   return (dispatch) => {
     dispatch({ type: "what_To_show", payload: value });
   };
 };
-const setReducer = (configObj) => {
+export const setReducer = (configObj) => {
   return configObj;
 };
-const eraseError = () => {
+export const eraseError = () => {
   return { type: "SET_ERROR_MESSAGE", payload: "" };
 };
-const setError = (errMessage) => {
+export const setError = (errMessage) => {
   return { type: "SET_ERROR_MESSAGE", payload: errMessage };
 };
 
 export const setImage = (file) => {
-  return { type: "SET_IMAGE", payload: file };
+  return { type: imageTypes.setImage, payload: file };
 };
 
-export default {
-  ...fbPostActions,
-  ...profileActions,
-  ...fbPagesActions,
-  ...authActions,
-  ...peopleActions,
-  ...blockActions,
-  ...commentActions,
-  ...groupActions,
-  whatToShow,
-  eraseError,
-  setError,
-  setImage,
-  setReducer,
+export const updateUnSeenNoti = async (cb = () => {}) => {
+  try {
+    const response = await Api.put("/notification/seen");
+    if (response.status === 200) {
+      cb(true);
+    }
+  } catch (err) {
+    cb(false);
+  }
 };

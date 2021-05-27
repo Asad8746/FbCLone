@@ -1,39 +1,25 @@
-import Api from "../Api/localhost";
-import { getToken } from "../utils/tokenUtils";
-
-const deleteComment = (id, commentId, actionCreater) => {
+import Api from "../Api";
+import { commentTypes, postTypes } from "../Reducers/constants";
+export const deleteComment = (id, comment_id, cb) => {
   return async (dispatch) => {
     try {
-      const response = await Api.delete(`/posts/${id}/comment/${commentId}`, {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.delete(`/posts/${id}/comment/${comment_id}`);
 
-      const { commentList, post } = response.data;
-
-      actionCreater(commentList);
-      return dispatch({ type: "COMMENT_ON_POST", payload: post });
+      cb(commentTypes.deleteComment, response.data.id);
+      dispatch({ type: postTypes.decPostComments, payload: id });
     } catch (err) {
       console.log(err.response.data);
     }
   };
 };
 
-const createComment = (id, comment, comments, actionCreater) => {
+export const createComment = (id, comment, actionCreater) => {
   return async (dispatch) => {
     try {
-      const token = localStorage.getItem("token") || null;
-      let response = await Api.put(
-        `/posts/comment/${id}`,
-        { comment },
-        {
-          headers: { "x-auth-token": token },
-        }
-      );
+      let response = await Api.put(`/posts/comment/${id}`, { comment });
       if (response.status === 200) {
-        const { commentList, post } = response.data;
-        console.log("Create Comment", response.data);
-        dispatch({ type: "COMMENT_ON_POST", payload: post });
-        actionCreater(commentList);
+        actionCreater(commentTypes.createComment, response.data);
+        dispatch({ type: postTypes.incPostComments, payload: id });
       }
     } catch (err) {
       console.log(err.message);
@@ -41,21 +27,16 @@ const createComment = (id, comment, comments, actionCreater) => {
   };
 };
 
-const getComments = async (id, actionCreater) => {
+export const getComments = async (id, pageNumber, setHasMore, cb) => {
   try {
-    const response = await Api.get(`/posts/comment/${id}`, {
-      headers: { "x-auth-token": getToken() },
-    });
-    if (response.status === 200) {
-      return actionCreater(response.data);
+    const response = await Api.get(
+      `/posts/comment/${id}?pageNumber=${pageNumber}`
+    );
+    if (response.data.length === 0) {
+      setHasMore(false);
     }
+    cb(commentTypes.getComments, response.data);
   } catch (err) {
     console.log(err.message);
   }
-};
-
-export const commentActions = {
-  getComments,
-  createComment,
-  deleteComment,
 };

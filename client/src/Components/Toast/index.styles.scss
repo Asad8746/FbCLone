@@ -1,0 +1,14 @@
+.notification--container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  #noti_avatar {
+    margin-right: 10px;
+  }
+  .notification {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    letter-spacing: 1px;
+  }
+}

@@ -1,3 +1,4 @@
+import { AuthTypes } from "./constants";
 const INITIALSTATE = {
   isAuthenticated: false,
   isLoading: true,
@@ -7,14 +8,15 @@ const INITIALSTATE = {
 };
 export default (state = INITIALSTATE, action) => {
   switch (action.type) {
-    case "REGISTER":
-      return { ...state, ...action.payload };
-    case "LOGIN_USER":
-      return { ...state, ...action.payload };
-    case "LOGOUT":
-      return { ...state, ...action.payload };
-    case "CHECK":
-      return { ...state, ...action.payload };
+    case AuthTypes.SET_AUTH:
+      return { ...state, isAuthenticated: action.payload };
+    case AuthTypes.SET_USER:
+      const { id, f_name, l_name } = action.payload;
+      return { ...state, id, f_name, l_name };
+    case AuthTypes.reset:
+      return { ...INITIALSTATE };
+    case AuthTypes.setLoading:
+      return { ...state, isLoading: action.payload };
     default:
       return state;
   }

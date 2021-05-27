@@ -1,0 +1,15 @@
+@import "../../sass/index.scss";
+.image-field {
+  width: 90%;
+  margin: 0 auto;
+  &__label {
+    color: $font-color;
+    text-align: center;
+    font-weight: 600;
+    text-transform: capitalize;
+    letter-spacing: 2px;
+    display: block;
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+  }
+}

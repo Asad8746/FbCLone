@@ -1,36 +1,30 @@
 import { combineReducers } from "redux";
 import authReducer from "./auth";
 import profileReducer from "./profileReducer";
-import postReducer from "./getPost";
-import getPeople from "./getPeople";
-import isFollower from "./isFollower";
-import whatToShow from "./whatToShow";
-import imageUpdated from "./imageUpdated";
-import getPosts from "./getPosts";
+import People from "./people";
+import Posts from "./Posts";
 import checkUser from "./checkUser";
-import imageReducer from "./setImage";
-import uploadProgress from "./uploadProgress";
+import image from "./Image";
 import errorReducer from "./setError";
 import blockedUserReducer from "./blockedUser";
 import pagesReducer from "./pages";
 import groupReducer from "./groupReducer";
 import { reducer as FormReducer } from "redux-form";
+import notificationReducer from "./notification";
+import pagination from "./pagination";
 
 export default combineReducers({
   Authentication: authReducer,
   form: FormReducer,
   profileReducer,
-  post: postReducer,
-  peopleList: getPeople,
-  isFollower,
-  display: whatToShow,
-  imageUpdated,
-  Posts: getPosts,
+  People,
+  Posts,
   isUser: checkUser,
-  image: imageReducer,
-  uploadProgress,
+  image,
   error: errorReducer,
   pages: pagesReducer,
   group: groupReducer,
   blocked: blockedUserReducer,
+  notification: notificationReducer,
+  pagination,
 });

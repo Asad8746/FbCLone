@@ -1,0 +1,21 @@
+#noti__bell-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.count-info {
+  font-size: 1rem;
+  height: 1.8rem;
+  width: 1.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  background-color: tomato;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translateX(40%);
+  color: white;
+  font-weight: 700;
+}

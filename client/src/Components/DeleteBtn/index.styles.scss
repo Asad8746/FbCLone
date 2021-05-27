@@ -1,0 +1,9 @@
+@import "../../sass/index";
+.delete-btn {
+  background-color: tomato;
+  border: 1px solid tomato;
+  .icon {
+    color: $white-color;
+    font-size: 1.1rem;
+  }
+}

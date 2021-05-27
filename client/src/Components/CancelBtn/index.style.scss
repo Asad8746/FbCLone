@@ -1,0 +1,14 @@
+@import "../../sass/index";
+.cancel-btn {
+  background-color: $white-color-1;
+  border: 1px solid $primary-color;
+  border-radius: 100px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  .cancel-icon {
+    color: $primary-color;
+    font-size: 1.1rem;
+  }
+}

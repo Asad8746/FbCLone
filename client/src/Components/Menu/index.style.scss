@@ -1,0 +1,151 @@
+@import "../../sass/index";
+.dropdown-modal {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 500;
+}
+
+.menu {
+  background-color: $white-color;
+  box-shadow: 0 1rem 4rem rgba($black-color, 0.1);
+  height: 5.6rem;
+  z-index: 999;
+  position: fixed;
+  &__logo {
+    @include respond(tab-port) {
+      height: 5rem;
+      width: 5rem;
+    }
+    @include respond(phone) {
+      height: 4rem;
+      width: 4rem;
+    }
+  }
+  #setting__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__top {
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 600;
+    display: flex;
+  }
+  &__hidden {
+    // @include respond(phone) {
+    //   display: none;
+    // }
+  }
+
+  .active__item {
+    fill: $logo-color;
+  }
+  &__icon {
+    fill: $font-color-2;
+    // height: 2rem;
+    height: 3rem;
+    width: 3rem;
+  }
+  &__list {
+    list-style: none;
+    font-size: 1.7rem;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    // @include respond(phone) {
+    //   flex-direction: column;
+    // }
+  }
+  &__left {
+    flex: 1;
+    height: 5.6rem;
+    display: flex;
+    align-items: center;
+  }
+  &__center {
+    flex: 3;
+    margin: 0 auto;
+    background-color: $white-color;
+    padding: 0;
+    @include respond(phone) {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.3);
+    }
+  }
+  &__right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @include respond(phone) {
+      justify-content: flex-end;
+      margin-right: 2rem;
+    }
+  }
+
+  &-center__item {
+    flex: 1;
+    height: 5.6rem;
+    color: $logo-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    position: relative;
+  }
+  &-right__item {
+    background-color: rgba($grey-color-border, 0.8);
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    &:not(:last-child) {
+      margin-right: 1.5rem;
+    }
+  }
+  &__avatar-container {
+    display: flex;
+    padding: 1rem;
+    border-radius: 1rem;
+    &:hover {
+      background-color: rgba($grey-color-border, 0.3);
+    }
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__avatar {
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 50%;
+  }
+  &__name {
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin-left: 1.5rem;
+    font-weight: 600;
+  }
+  &__link {
+    &:hover {
+      background-color: rgba($grey-color-border, 0.3);
+      cursor: pointer;
+    }
+  }
+  #menu-icon {
+    color: $logo-color;
+    font-size: 1.8rem;
+  }
+}

@@ -1,0 +1,16 @@
+@import "../../sass/index";
+.list {
+  &__container {
+    background-color: $white-color;
+    padding: 2rem;
+  }
+  &__grid-container {
+    display: grid;
+    gap: 1rem;
+    background-color: $white-color;
+    grid-template-columns: 1fr 1fr;
+    @include respond(phone) {
+      grid-template-columns: 1fr;
+    }
+  }
+}

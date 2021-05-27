@@ -1,93 +1,68 @@
 import history from "../history";
-import Api from "../Api/localhost";
-import { getToken, removeToken } from "../utils/tokenUtils";
-
-const getProfile = () => {
-  return async (dispatch) => {
-    const response = await Api.get("/profile/", {
-      headers: { "x-auth-token": getToken() },
-    });
-    if (response.status !== 200) {
-      return history.push("/login");
-    }
-    return dispatch({ type: "GET_PROFILE", payload: { ...response.data } });
-  };
-};
-// const getUserProfile = () => {
-//   return async (dispatch) => {
-//     try {
-//       const response = await Api.get(`/profile`, {
-//         headers: { "x-auth-token": getToken() },
-//       });
-//       if (response.status === 200) {
-//         dispatch({ type: "GET_PROFILE_BY_ID", payload: response.data });
-//       }
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-// };
-
-const getProfileById = (id) => {
+import Api from "../Api";
+import { removeToken } from "../utils/tokenUtils";
+import { AuthTypes, imageTypes, profileTypes } from "../Reducers/constants";
+export const getProfile = () => {
   return async (dispatch) => {
     try {
-      const response = await Api.get(`/profile/${id}`, {
-        headers: { "x-auth-token": getToken() },
+      const response = await Api.get("/profile/");
+      dispatch({
+        type: profileTypes.getProfile,
+        payload: { ...response.data },
       });
-      if (response.status === 200) {
-        dispatch({ type: "GET_PROFILE_BY_ID", payload: response.data });
-      }
+      dispatch({ type: profileTypes.setLoading, payload: false });
     } catch (err) {
-      console.log(err);
+      if (err.response) {
+        dispatch({
+          type: profileTypes.error,
+          payload: err.response.data,
+        });
+      }
     }
   };
 };
 
-const followProfile = (id, callback) => {
+export const getProfileById = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.put(
-        `/follower/follow/${id}`,
-        {},
-        {
-          headers: { "x-auth-token": getToken() },
-        }
-      );
-      if (response.status === 200) {
-        console.log(response.data);
-        dispatch({ type: "FOLLOW_USER", payload: response.data });
-        callback(true);
-      }
+      const response = await Api.get(`/profile/${id}`);
+      dispatch({ type: profileTypes.getProfile, payload: response.data });
+      dispatch({ type: profileTypes.setLoading, payload: false });
     } catch (err) {
-      console.log(err.message);
+      if (err.response) {
+        dispatch({
+          type: profileTypes.error,
+          payload: err.response.data,
+        });
+      }
     }
   };
 };
 
-const unfollowProfile = (id, callback) => {
-  return async (dispatch) => {
-    try {
-      const response = await Api.put(
-        `/follower/unfollow/${id}`,
-        {},
-        {
-          headers: { "x-auth-token": getToken() },
-        }
-      );
-      if (response.status === 200) {
-        dispatch({ type: "UNFOLLOW_USER", payload: response.data });
-        callback(false);
-      }
-    } catch (err) {
-      console.log(err.message);
+export const followProfile = async (id, callback) => {
+  try {
+    const response = await Api.put(`/profile/follow/${id}`);
+    if (response.status === 200) {
+      callback(true);
     }
-  };
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+export const unfollowProfile = async (id, callback) => {
+  try {
+    const response = await Api.put(`/profile/unfollow/${id}`);
+    if (response.status === 200) {
+      callback(false);
+    }
+  } catch (err) {
+    console.log(err.message);
+  }
 };
 export const checkFollower = async (id, callback) => {
   try {
-    const response = await Api.get(`/follower/checkfollower/${id}`, {
-      headers: { "x-auth-token": getToken() },
-    });
+    const response = await Api.get(`/profile/checkfollower/${id}`);
     if (response.status === 200) {
       callback(response.data);
     }
@@ -99,10 +74,8 @@ export const checkFollower = async (id, callback) => {
 export const getFollowers = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.get(`/profile/${id}/followers`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      dispatch({ type: "GET_FOLLOWERS", payload: response.data });
+      const response = await Api.get(`/profile/${id}/followers`);
+      dispatch({ type: profileTypes.getFollowers, payload: response.data });
     } catch (err) {
       console.log(err.response.data);
     }
@@ -112,17 +85,15 @@ export const getFollowers = (id) => {
 export const getFollowing = (id) => {
   return async (dispatch) => {
     try {
-      const response = await Api.get(`/profile/${id}/following`, {
-        headers: { "x-auth-token": getToken() },
-      });
-      dispatch({ type: "GET_FOLLOWING", payload: response.data });
+      const response = await Api.get(`/profile/${id}/following`);
+      dispatch({ type: profileTypes.getFollowing, payload: response.data });
     } catch (err) {
       console.log(err.response.data);
     }
   };
 };
 
-const uploadPhoto = (file, link) => {
+export const uploadPhoto = (file, link, cb) => {
   return async (dispatch) => {
     try {
       const formData = new FormData();
@@ -130,28 +101,26 @@ const uploadPhoto = (file, link) => {
 
       const response = await Api.put(link, formData, {
         headers: {
-          "x-auth-token": getToken(),
           "Content-Type": "multipart/form-data",
         },
       });
       if (response.status === 201) {
-        dispatch({ type: "SET_IMAGE", payload: null });
+        dispatch({ type: imageTypes.setImage, payload: null });
+        cb();
         return history.goBack();
       }
     } catch (err) {
       console.log(err.message);
+      cb();
     }
   };
 };
 
-const updateProfile = (formValues) => {
+export const updateProfile = (formValues) => {
   return async (dispatch) => {
     try {
-      const response = await Api.put("/profile/edit", formValues, {
-        headers: { "x-auth-token": getToken() },
-      });
+      const response = await Api.put("/profile/edit", formValues);
       if (response.status === 200) {
-        console.log(response.data);
         return history.push(`/profile/${response.data}`);
       }
     } catch (err) {
@@ -161,45 +130,19 @@ const updateProfile = (formValues) => {
   };
 };
 
-const deleteProfile = (confirmPassword) => {
+export const deleteProfile = (confirmPassword) => {
   return async (dispatch) => {
     try {
-      await Api.post(
-        "/profile/delete",
-        {
-          confirmPassword,
-        },
-        {
-          headers: { "x-auth-token": getToken() },
-        }
-      );
-      removeToken();
-      dispatch({
-        type: "CHECK",
-        payload: {
-          isAuthenticated: false,
-          isLoading: false,
-          id: "",
-          f_name: "",
-          l_name: "",
-        },
+      await Api.post("/profile/delete", {
+        confirmPassword,
       });
+      removeToken();
+      dispatch({ type: AuthTypes.reset });
+      dispatch({ type: profileTypes.reset });
+      dispatch({ type: AuthTypes.setLoading, payload: false });
       return history.push("/");
     } catch (err) {
       console.log(err.response.data);
     }
   };
-};
-
-export const profileActions = {
-  getProfile,
-  getProfileById,
-  followProfile,
-  unfollowProfile,
-  checkFollower,
-  uploadPhoto,
-  updateProfile,
-  deleteProfile,
-  getFollowers,
-  getFollowing,
 };
