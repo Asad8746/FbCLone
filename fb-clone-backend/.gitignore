@@ -1,5 +1,6 @@
 #dependencies
-/node_modules
+/node_modules/
+/tests/
 /config/test.json
 /config/development.json
-/tests
+*.log
