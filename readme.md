@@ -31,7 +31,3 @@ Frontend SPA is build using
 5. User can create/delete/update Groups and can add other members to that group.
 6. User can comment or like a post
 7. User can f ollow/unFollow/Block other Users.
-
-## Demo Link
-
-[Link to FbClone App](https://agile-mountain-34206.herokuapp.com/)
